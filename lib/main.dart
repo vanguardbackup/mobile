@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vanguard/remote_servers_page.dart';
+import 'package:vanguard/tag_page.dart';
+import 'package:vanguard/tag_provider.dart';
 import 'auth_manager.dart';
 import 'backup_destinations_page.dart';
 import 'backup_task_log_provider.dart';
@@ -171,6 +173,7 @@ void main() async {
   final remoteServerProvider = RemoteServerProvider(authManager: authManager);
   final backupDestinationProvider = BackupDestinationProvider(authManager: authManager);
   final notificationStreamProvider = NotificationStreamProvider(authManager: authManager);
+  final tagProvider = TagProvider(authManager: authManager);
 
   await deviceInfoProvider.initializeDeviceInfo();
 
@@ -191,6 +194,7 @@ void main() async {
         ChangeNotifierProvider.value(value: remoteServerProvider),
         ChangeNotifierProvider.value(value: backupDestinationProvider),
         ChangeNotifierProvider.value(value: notificationStreamProvider),
+        ChangeNotifierProvider.value(value: tagProvider),
       ],
       child: MyApp(authManager: authManager),
     ),
@@ -257,6 +261,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       NavigationItem.remoteServers: RemoteServersPage(),
       NavigationItem.backupDestinations: BackupDestinationsPage(),
       NavigationItem.notificationStreams: NotificationStreamsPage(),
+      NavigationItem.tags: TagsPage(),
     };
   }
 
@@ -285,7 +290,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Vanguard',
                   style: TextStyle(
                     color: Colors.white,

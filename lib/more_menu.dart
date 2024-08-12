@@ -17,6 +17,7 @@ class MoreMenu extends StatelessWidget {
           _buildMenuItem(context, 'Remote Servers', HeroIcons.server, NavigationItem.remoteServers),
           _buildMenuItem(context, 'Backup Destinations', HeroIcons.cloudArrowUp, NavigationItem.backupDestinations),
           _buildMenuItem(context, 'Notification Streams', HeroIcons.bellAlert, NavigationItem.notificationStreams),
+          _buildMenuItem(context, 'Tags', HeroIcons.tag, NavigationItem.tags),
         ],
       ),
     );

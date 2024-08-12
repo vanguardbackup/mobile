@@ -5,5 +5,6 @@ enum NavigationItem {
   remoteServers,
   backupDestinations,
   notificationStreams,
-  more
+  more,
+  tags,
 }
