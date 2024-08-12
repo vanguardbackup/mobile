@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:heroicons/heroicons.dart';
+import 'package:vanguard/remote_servers_page.dart';
 import 'auth_manager.dart';
+import 'backup_destinations_page.dart';
 import 'backup_task_log_provider.dart';
 import 'lock_provider.dart';
 import 'lock_screen.dart';
+import 'navigation_item.dart';
+import 'notification_streams_page.dart';
 import 'user_provider.dart';
 import 'backup_task_provider.dart';
+import 'remote_server_provider.dart';
+import 'backup_destination_provider.dart';
+import 'notification_stream_provider.dart';
 import 'login_page.dart';
 import 'backup_tasks_page.dart';
 import 'logs_page.dart';
@@ -16,6 +22,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'maintenance_banner.dart';
+import 'bottom_nav_bar.dart';
 
 class ThemeProvider with ChangeNotifier {
   bool _isDarkMode = true;
@@ -161,6 +168,9 @@ void main() async {
   final deviceInfoProvider = DeviceInfoProvider();
   final backupTaskLogProvider = BackupTaskLogProvider(authManager: authManager);
   final lockProvider = LockProvider();
+  final remoteServerProvider = RemoteServerProvider(authManager: authManager);
+  final backupDestinationProvider = BackupDestinationProvider(authManager: authManager);
+  final notificationStreamProvider = NotificationStreamProvider(authManager: authManager);
 
   await deviceInfoProvider.initializeDeviceInfo();
 
@@ -178,6 +188,9 @@ void main() async {
         ChangeNotifierProvider.value(value: deviceInfoProvider),
         ChangeNotifierProvider.value(value: backupTaskLogProvider),
         ChangeNotifierProvider.value(value: lockProvider),
+        ChangeNotifierProvider.value(value: remoteServerProvider),
+        ChangeNotifierProvider.value(value: backupDestinationProvider),
+        ChangeNotifierProvider.value(value: notificationStreamProvider),
       ],
       child: MyApp(authManager: authManager),
     ),
@@ -220,8 +233,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
 class MainNavigationWrapper extends StatefulWidget {
   final AuthManager authManager;
 
@@ -232,23 +243,26 @@ class MainNavigationWrapper extends StatefulWidget {
 }
 
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
-  int _selectedIndex = 0;
+  NavigationItem _selectedItem = NavigationItem.backupTasks;
 
-  late final List<Widget> _pages;
+  late final Map<NavigationItem, Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    _pages = [
-      BackupTasksPage(),
-      BackupTaskLogsPage(),
-      ProfilePage(authManager: widget.authManager),
-    ];
+    _pages = {
+      NavigationItem.backupTasks: BackupTasksPage(),
+      NavigationItem.taskLogs: BackupTaskLogsPage(),
+      NavigationItem.profile: ProfilePage(authManager: widget.authManager),
+      NavigationItem.remoteServers: RemoteServersPage(),
+      NavigationItem.backupDestinations: BackupDestinationsPage(),
+      NavigationItem.notificationStreams: NotificationStreamsPage(),
+    };
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(NavigationItem item) {
     setState(() {
-      _selectedIndex = index;
+      _selectedItem = item;
     });
   }
 
@@ -257,7 +271,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
-
         if (userProvider.user == null) {
           userProvider.fetchUser();
           return const Scaffold(
@@ -292,114 +305,14 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             backgroundColor: Colors.black,
             elevation: 0,
           ),
-          body: IndexedStack(
-            index: _selectedIndex,
-            children: _pages,
-          ),
+          body: _pages[_selectedItem] ?? const SizedBox.shrink(),
           bottomNavigationBar: BottomNavBar(
-            selectedIndex: _selectedIndex,
+            selectedItem: _selectedItem,
             onItemTapped: _onItemTapped,
             userProvider: userProvider,
           ),
         );
       },
-    );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  final int selectedIndex;
-  final Function(int) onItemTapped;
-  final UserProvider userProvider;
-
-  const BottomNavBar({
-    Key? key,
-    required this.selectedIndex,
-    required this.onItemTapped,
-    required this.userProvider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isLightMode = theme.brightness == Brightness.light;
-
-    return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: HeroIcon(
-            HeroIcons.archiveBox,
-            color: isLightMode ? Colors.black54 : Colors.white70,
-          ),
-          activeIcon: HeroIcon(
-            HeroIcons.archiveBox,
-            color: theme.colorScheme.primary,
-          ),
-          label: 'Backup Tasks',
-        ),
-        BottomNavigationBarItem(
-          icon: HeroIcon(
-            HeroIcons.documentText,
-            color: isLightMode ? Colors.black54 : Colors.white70,
-          ),
-          activeIcon: HeroIcon(
-            HeroIcons.documentText,
-            color: theme.colorScheme.primary,
-          ),
-          label: 'Logs',
-        ),
-        BottomNavigationBarItem(
-          icon: _buildProfileIcon(context),
-          label: userProvider.user?.personalInfo.firstName ?? 'Profile',
-        ),
-      ],
-      currentIndex: selectedIndex,
-      selectedItemColor: theme.colorScheme.primary,
-      unselectedItemColor: isLightMode ? Colors.black54 : Colors.white70,
-      backgroundColor: theme.scaffoldBackgroundColor,
-      onTap: onItemTapped,
-      type: BottomNavigationBarType.fixed,
-      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
-    );
-  }
-
-  Widget _buildProfileIcon(BuildContext context) {
-    final theme = Theme.of(context);
-    final user = userProvider.user;
-    final isSelected = selectedIndex == 2;
-
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: user?.personalInfo.avatarUrl != null
-          ? CircleAvatar(
-        radius: 14,
-        backgroundImage: NetworkImage(user!.personalInfo.avatarUrl!),
-      )
-          : CircleAvatar(
-        radius: 14,
-        backgroundColor: isSelected
-            ? theme.colorScheme.primary
-            : theme.brightness == Brightness.light
-            ? Colors.grey[300]
-            : Colors.grey[700],
-        child: Text(
-          user?.personalInfo.name.substring(0, 1).toUpperCase() ?? '',
-          style: TextStyle(
-            color: isSelected
-                ? theme.scaffoldBackgroundColor
-                : theme.colorScheme.primary,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
     );
   }
 }
