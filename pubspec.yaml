@@ -1,0 +1,64 @@
+name: vanguard
+description: "A mobile application for Vanguard."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  provider: ^6.0.0
+  shared_preferences: ^2.0.15
+  local_auth: ^2.1.6
+  flutter_secure_storage: ^9.2.2
+  device_info_plus: ^10.0.0
+  cupertino_icons: ^1.0.8
+  heroicons: ^0.10.0
+  intl: ^0.18.0
+  flutter_svg: ^2.0.10+1
+  flutter_animate: ^4.1.1+1
+  icons_launcher: ^2.1.7
+  url_launcher: ^6.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins-Regular.ttf
+        - asset: fonts/Poppins-Medium.ttf
+          weight: 500
+
+
+  assets:
+    - assets/logo.svg
+
+flutter_native_splash:
+  image: assets/splash.png
+  android_12:
+    image: assets/icon.png
+    icon_background_color: "#000000"
+  color: "#000000"
+
+icons_launcher:
+  image_path: "assets/icon.png"
+  platforms:
+    android:
+      enable: true
+      image_path: "assets/icon.png"
+      adaptive_background_color: '#000000'
+      adaptive_foreground_image: "assets/icon_transparent.png"
+      adaptive_round_image: "assets/icon_rounded.png"
+    ios:
+      enable: true
