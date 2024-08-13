@@ -8,8 +8,10 @@ class UserProvider with ChangeNotifier {
   User? _user;
   User? get user => _user;
   final AuthManager authManager;
+  final http.Client httpClient;
 
-  UserProvider({required this.authManager});
+  UserProvider({required this.authManager, http.Client? client})
+      : httpClient = client ?? http.Client();
 
   Future<bool> login(String email, String password) async {
     if (authManager.baseUrl == null) {
@@ -17,7 +19,7 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         Uri.parse('${authManager.baseUrl}/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
@@ -47,15 +49,14 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final response = await http.get(
+      final response = await httpClient.get(
         Uri.parse('${authManager.baseUrl}/api/user'),
         headers: authManager.headers,
       );
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> &&
-            jsonResponse.containsKey('data')) {
+        if (jsonResponse is Map<String, dynamic>) {
           _user = User.fromJson(jsonResponse);
           notifyListeners();
           return true;
