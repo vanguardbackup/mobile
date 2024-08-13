@@ -7,7 +7,8 @@ import 'notification_stream_model.dart';
 
 class NotificationStreamsPage extends StatefulWidget {
   @override
-  _NotificationStreamsPageState createState() => _NotificationStreamsPageState();
+  _NotificationStreamsPageState createState() =>
+      _NotificationStreamsPageState();
 }
 
 class _NotificationStreamsPageState extends State<NotificationStreamsPage> {
@@ -18,7 +19,8 @@ class _NotificationStreamsPageState extends State<NotificationStreamsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<NotificationStreamProvider>(context, listen: false).fetchStreams();
+      Provider.of<NotificationStreamProvider>(context, listen: false)
+          .fetchStreams();
     });
   }
 
@@ -80,13 +82,14 @@ class _NotificationStreamsPageState extends State<NotificationStreamsPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search by label...',
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-          icon: Icon(Icons.clear, color: theme.colorScheme.primary),
-          onPressed: _clearSearch,
-        )
+                icon: Icon(Icons.clear, color: theme.colorScheme.primary),
+                onPressed: _clearSearch,
+              )
             : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
@@ -112,7 +115,8 @@ class _NotificationStreamsPageState extends State<NotificationStreamsPage> {
           return _buildEmptyWidget();
         }
 
-        final filteredStreams = _filterStreams(notificationStreamProvider.streams);
+        final filteredStreams =
+            _filterStreams(notificationStreamProvider.streams);
 
         return RefreshIndicator(
           onRefresh: () => notificationStreamProvider.fetchStreams(),
@@ -184,18 +188,21 @@ class NotificationStreamListItem extends StatelessWidget {
         leading: _buildStreamIcon(context),
         title: Text(
           stream.label,
-          style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+          style: theme.textTheme.titleMedium
+              ?.copyWith(color: theme.colorScheme.onBackground),
         ),
         subtitle: Text(
           stream.typeHuman,
-          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
+          style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onBackground.withOpacity(0.7)),
         ),
         trailing: _buildNotificationStatus(context),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NotificationStreamDetailPage(stream: stream),
+              builder: (context) =>
+                  NotificationStreamDetailPage(stream: stream),
             ),
           );
         },
@@ -268,11 +275,13 @@ class NotificationStreamDetailPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('Stream Details', style: TextStyle(color: theme.colorScheme.onBackground)),
+        title: Text('Stream Details',
+            style: TextStyle(color: theme.colorScheme.onBackground)),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: HeroIcon(HeroIcons.arrowLeft, color: theme.colorScheme.onBackground),
+          icon: HeroIcon(HeroIcons.arrowLeft,
+              color: theme.colorScheme.onBackground),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -283,28 +292,40 @@ class NotificationStreamDetailPage extends StatelessWidget {
           children: [
             Text(
               stream.label,
-              style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: theme.colorScheme.onBackground,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 24),
             _buildDetailItem(context, HeroIcons.bell, 'Type', stream.typeHuman),
-            _buildDetailItem(context, HeroIcons.checkCircle, 'Notify on Success', stream.notifications.onSuccess ? 'Yes' : 'No'),
-            _buildDetailItem(context, HeroIcons.xCircle, 'Notify on Failure', stream.notifications.onFailure ? 'Yes' : 'No'),
-            _buildDetailItem(context, HeroIcons.calendar, 'Created At', _formatDate(stream.createdAt)),
-            _buildDetailItem(context, HeroIcons.pencil, 'Updated At', _formatDate(stream.updatedAt)),
+            _buildDetailItem(
+                context,
+                HeroIcons.checkCircle,
+                'Notify on Success',
+                stream.notifications.onSuccess ? 'Yes' : 'No'),
+            _buildDetailItem(context, HeroIcons.xCircle, 'Notify on Failure',
+                stream.notifications.onFailure ? 'Yes' : 'No'),
+            _buildDetailItem(context, HeroIcons.calendar, 'Created At',
+                _formatDate(stream.createdAt)),
+            _buildDetailItem(context, HeroIcons.pencil, 'Updated At',
+                _formatDate(stream.updatedAt)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, HeroIcons icon, String label, String value) {
+  Widget _buildDetailItem(
+      BuildContext context, HeroIcons icon, String label, String value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeroIcon(icon, color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
+          HeroIcon(icon,
+              color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -312,12 +333,15 @@ class NotificationStreamDetailPage extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
                 Text(
                   value,
-                  style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 16),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground, fontSize: 16),
                 ),
               ],
             ),

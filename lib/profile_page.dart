@@ -32,11 +32,16 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildPersonalInfo(context, user),
-              _buildAnimatedSection(context, 'Account Settings', _buildAccountSettings(context, user)),
-              _buildAnimatedSection(context, 'Backup Tasks', _buildBackupTasksInfo(context, user)),
-              _buildAnimatedSection(context, 'Statistics', _buildRelatedEntities(context, user)),
-              _buildAnimatedSection(context, 'Account Details', _buildTimestamps(context, user)),
-              _buildAnimatedSection(context, 'App Settings', _buildAppSettings(context)),
+              _buildAnimatedSection(context, 'Account Settings',
+                  _buildAccountSettings(context, user)),
+              _buildAnimatedSection(context, 'Backup Tasks',
+                  _buildBackupTasksInfo(context, user)),
+              _buildAnimatedSection(
+                  context, 'Statistics', _buildRelatedEntities(context, user)),
+              _buildAnimatedSection(
+                  context, 'Account Details', _buildTimestamps(context, user)),
+              _buildAnimatedSection(
+                  context, 'App Settings', _buildAppSettings(context)),
               const SizedBox(height: 24),
               _buildLogoutButton(context, userProvider),
               const SizedBox(height: 24),
@@ -65,11 +70,14 @@ class ProfilePage extends StatelessWidget {
                 backgroundColor: theme.colorScheme.secondary,
                 child: user.personalInfo.avatarUrl == null
                     ? Text(
-                  user.personalInfo.firstName.isNotEmpty
-                      ? user.personalInfo.firstName.substring(0, 1).toUpperCase()
-                      : '',
-                  style: TextStyle(fontSize: 32, color: theme.colorScheme.onSecondary),
-                )
+                        user.personalInfo.firstName.isNotEmpty
+                            ? user.personalInfo.firstName
+                                .substring(0, 1)
+                                .toUpperCase()
+                            : '',
+                        style: TextStyle(
+                            fontSize: 32, color: theme.colorScheme.onSecondary),
+                      )
                     : null,
               ),
             ),
@@ -82,7 +90,8 @@ class ProfilePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                HeroIcon(HeroIcons.envelope, size: 16, color: theme.iconTheme.color),
+                HeroIcon(HeroIcons.envelope,
+                    size: 16, color: theme.iconTheme.color),
                 const SizedBox(width: 8),
                 Text(
                   user.personalInfo.email,
@@ -96,7 +105,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedSection(BuildContext context, String title, Widget content) {
+  Widget _buildAnimatedSection(
+      BuildContext context, String title, Widget content) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
       duration: const Duration(milliseconds: 500),
@@ -123,7 +133,8 @@ class ProfilePage extends StatelessWidget {
           children: [
             Text(
               title,
-              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             content,
@@ -136,11 +147,16 @@ class ProfilePage extends StatelessWidget {
   Widget _buildAccountSettings(BuildContext context, User user) {
     return Column(
       children: [
-        _buildSettingItem(context, HeroIcons.clock, 'Timezone', user.accountSettings.timezone),
-        _buildSettingItem(context, HeroIcons.language, 'Language', user.accountSettings.language),
-        _buildSettingItem(context, HeroIcons.userCircle, 'Elevated Permissions', user.accountSettings.isAdmin ? 'Yes' : 'No'),
-        _buildSettingItem(context, HeroIcons.codeBracket, 'GitHub Login', user.accountSettings.githubLoginEnabled ? 'Enabled' : 'Disabled'),
-        _buildSettingItem(context, HeroIcons.envelope, 'Weekly Summary', user.accountSettings.weeklySummaryEnabled ? 'Enabled' : 'Disabled'),
+        _buildSettingItem(context, HeroIcons.clock, 'Timezone',
+            user.accountSettings.timezone),
+        _buildSettingItem(context, HeroIcons.language, 'Language',
+            user.accountSettings.language),
+        _buildSettingItem(context, HeroIcons.userCircle, 'Elevated Permissions',
+            user.accountSettings.isAdmin ? 'Yes' : 'No'),
+        _buildSettingItem(context, HeroIcons.codeBracket, 'GitHub Login',
+            user.accountSettings.githubLoginEnabled ? 'Enabled' : 'Disabled'),
+        _buildSettingItem(context, HeroIcons.envelope, 'Weekly Summary',
+            user.accountSettings.weeklySummaryEnabled ? 'Enabled' : 'Disabled'),
       ],
     );
   }
@@ -148,10 +164,14 @@ class ProfilePage extends StatelessWidget {
   Widget _buildBackupTasksInfo(BuildContext context, User user) {
     return Column(
       children: [
-        _buildInfoItem(context, HeroIcons.documentDuplicate, 'Total Tasks', user.backupTasks.total.toString()),
-        _buildInfoItem(context, HeroIcons.play, 'Active Tasks', user.backupTasks.active.toString()),
-        _buildInfoItem(context, HeroIcons.documentText, 'Total Logs', user.backupTasks.logs.total.toString()),
-        _buildInfoItem(context, HeroIcons.calendar, 'Logs Today', user.backupTasks.logs.today.toString()),
+        _buildInfoItem(context, HeroIcons.documentDuplicate, 'Total Tasks',
+            user.backupTasks.total.toString()),
+        _buildInfoItem(context, HeroIcons.play, 'Active Tasks',
+            user.backupTasks.active.toString()),
+        _buildInfoItem(context, HeroIcons.documentText, 'Total Logs',
+            user.backupTasks.logs.total.toString()),
+        _buildInfoItem(context, HeroIcons.calendar, 'Logs Today',
+            user.backupTasks.logs.today.toString()),
       ],
     );
   }
@@ -159,10 +179,14 @@ class ProfilePage extends StatelessWidget {
   Widget _buildRelatedEntities(BuildContext context, User user) {
     return Column(
       children: [
-        _buildInfoItem(context, HeroIcons.server, 'Remote Servers', user.relatedEntities.remoteServers.toString()),
-        _buildInfoItem(context, HeroIcons.cloudArrowUp, 'Backup Destinations', user.relatedEntities.backupDestinations.toString()),
-        _buildInfoItem(context, HeroIcons.tag, 'Tags', user.relatedEntities.tags.toString()),
-        _buildInfoItem(context, HeroIcons.bell, 'Notification Streams', user.relatedEntities.notificationStreams.toString()),
+        _buildInfoItem(context, HeroIcons.server, 'Remote Servers',
+            user.relatedEntities.remoteServers.toString()),
+        _buildInfoItem(context, HeroIcons.cloudArrowUp, 'Backup Destinations',
+            user.relatedEntities.backupDestinations.toString()),
+        _buildInfoItem(context, HeroIcons.tag, 'Tags',
+            user.relatedEntities.tags.toString()),
+        _buildInfoItem(context, HeroIcons.bell, 'Notification Streams',
+            user.relatedEntities.notificationStreams.toString()),
       ],
     );
   }
@@ -176,7 +200,9 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(BuildContext context, HeroIcons icon, String title, String value, {VoidCallback? onTap}) {
+  Widget _buildSettingItem(
+      BuildContext context, HeroIcons icon, String title, String value,
+      {VoidCallback? onTap}) {
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
@@ -189,14 +215,17 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: Text(title, style: theme.textTheme.bodyMedium),
             ),
-            Text(value, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(value,
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoItem(BuildContext context, HeroIcons icon, String title, String value) {
+  Widget _buildInfoItem(
+      BuildContext context, HeroIcons icon, String title, String value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -207,7 +236,9 @@ class ProfilePage extends StatelessWidget {
           Expanded(
             child: Text(title, style: theme.textTheme.bodyMedium),
           ),
-          Text(value, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(value,
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -223,7 +254,7 @@ class ProfilePage extends StatelessWidget {
               HeroIcons.lockClosed,
               'App Lock',
               lockProvider.isLockEnabled,
-                  (bool value) async {
+              (bool value) async {
                 if (value) {
                   // Enabling app lock
                   await _showPinDialog(context, lockProvider, isNewPin: true);
@@ -231,8 +262,8 @@ class ProfilePage extends StatelessWidget {
                   // Disabling app lock
                   await _confirmSecurityChange(context, lockProvider,
                       action: () => lockProvider.toggleLock(false),
-                      message: 'Are you sure you want to disable the app lock?'
-                  );
+                      message:
+                          'Are you sure you want to disable the app lock?');
                 }
               },
             ),
@@ -242,13 +273,12 @@ class ProfilePage extends StatelessWidget {
                 HeroIcons.fingerPrint,
                 'Use Biometrics',
                 lockProvider.useBiometrics,
-                    (bool value) async {
+                (bool value) async {
                   await _confirmSecurityChange(context, lockProvider,
                       action: () => lockProvider.toggleBiometrics(value),
                       message: value
                           ? 'Are you sure you want to enable biometric authentication?'
-                          : 'Are you sure you want to disable biometric authentication?'
-                  );
+                          : 'Are you sure you want to disable biometric authentication?');
                 },
               ),
               _buildSettingItem(
@@ -256,7 +286,8 @@ class ProfilePage extends StatelessWidget {
                 HeroIcons.key,
                 'Change PIN',
                 '',
-                onTap: () => _showPinDialog(context, lockProvider, isNewPin: false),
+                onTap: () =>
+                    _showPinDialog(context, lockProvider, isNewPin: false),
               ),
             ],
           ],
@@ -265,7 +296,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Future<void> _showPinDialog(BuildContext context, LockProvider lockProvider, {required bool isNewPin}) async {
+  Future<void> _showPinDialog(BuildContext context, LockProvider lockProvider,
+      {required bool isNewPin}) async {
     final pinController = TextEditingController();
     final confirmPinController = TextEditingController();
 
@@ -308,7 +340,8 @@ class ProfilePage extends StatelessWidget {
             ElevatedButton(
               child: Text('Set'),
               onPressed: () {
-                if (pinController.text.length == 4 && pinController.text == confirmPinController.text) {
+                if (pinController.text.length == 4 &&
+                    pinController.text == confirmPinController.text) {
                   if (isNewPin) {
                     lockProvider.toggleLock(true);
                   }
@@ -316,7 +349,8 @@ class ProfilePage extends StatelessWidget {
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('PINs do not match or are not 4 digits')),
+                    SnackBar(
+                        content: Text('PINs do not match or are not 4 digits')),
                   );
                 }
               },
@@ -327,7 +361,9 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmSecurityChange(BuildContext context, LockProvider lockProvider, {required Function action, required String message}) async {
+  Future<void> _confirmSecurityChange(
+      BuildContext context, LockProvider lockProvider,
+      {required Function action, required String message}) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -364,7 +400,8 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-  Future<bool> _authenticateForChange(BuildContext context, LockProvider lockProvider) async {
+  Future<bool> _authenticateForChange(
+      BuildContext context, LockProvider lockProvider) async {
     if (lockProvider.useBiometrics) {
       final result = await lockProvider.authenticateUser();
       if (result['success']) {
@@ -384,7 +421,8 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-  Future<bool> _showPinEntryDialog(BuildContext context, LockProvider lockProvider) async {
+  Future<bool> _showPinEntryDialog(
+      BuildContext context, LockProvider lockProvider) async {
     final pinController = TextEditingController();
     final authenticated = await showDialog<bool>(
       context: context,
@@ -410,7 +448,8 @@ class ProfilePage extends StatelessWidget {
             ElevatedButton(
               child: Text('Confirm'),
               onPressed: () async {
-                final isPinCorrect = await lockProvider.checkPin(pinController.text);
+                final isPinCorrect =
+                    await lockProvider.checkPin(pinController.text);
                 Navigator.of(context).pop(isPinCorrect);
               },
             ),
@@ -421,16 +460,8 @@ class ProfilePage extends StatelessWidget {
     return authenticated ?? false;
   }
 
-
-
-
-  Widget _buildSettingItemWithSwitch(
-      BuildContext context,
-      HeroIcons icon,
-      String title,
-      bool value,
-      Function(bool) onChanged
-      ) {
+  Widget _buildSettingItemWithSwitch(BuildContext context, HeroIcons icon,
+      String title, bool value, Function(bool) onChanged) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -467,7 +498,8 @@ class ProfilePage extends StatelessWidget {
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            HeroIcon(HeroIcons.arrowLeftEndOnRectangle, size: 20, color: Colors.white),
+            HeroIcon(HeroIcons.arrowLeftEndOnRectangle,
+                size: 20, color: Colors.white),
             SizedBox(width: 8),
             Text(
               'Log Out',
@@ -479,19 +511,23 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  void _showLogoutConfirmationDialog(BuildContext context, UserProvider userProvider) {
+  void _showLogoutConfirmationDialog(
+      BuildContext context, UserProvider userProvider) {
     final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: theme.dialogBackgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text('Confirm Logout', style: theme.textTheme.titleLarge),
-          content: Text('Are you sure you want to log out?', style: theme.textTheme.bodyMedium),
+          content: Text('Are you sure you want to log out?',
+              style: theme.textTheme.bodyMedium),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.secondary)),
+              child: Text('Cancel',
+                  style: TextStyle(color: theme.colorScheme.secondary)),
               onPressed: () {
                 Navigator.of(context).pop();
               },

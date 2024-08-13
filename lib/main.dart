@@ -45,9 +45,12 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[900],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
-      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
-      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
+      displayLarge: TextStyle(
+          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+      titleLarge: TextStyle(
+          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
+      bodyMedium: TextStyle(
+          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
     ),
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
@@ -86,9 +89,12 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[100],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
-      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
-      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
+      displayLarge: TextStyle(
+          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+      titleLarge: TextStyle(
+          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
+      bodyMedium: TextStyle(
+          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
     ),
     colorScheme: const ColorScheme.light(
       primary: Colors.black,
@@ -171,8 +177,10 @@ void main() async {
   final backupTaskLogProvider = BackupTaskLogProvider(authManager: authManager);
   final lockProvider = LockProvider();
   final remoteServerProvider = RemoteServerProvider(authManager: authManager);
-  final backupDestinationProvider = BackupDestinationProvider(authManager: authManager);
-  final notificationStreamProvider = NotificationStreamProvider(authManager: authManager);
+  final backupDestinationProvider =
+      BackupDestinationProvider(authManager: authManager);
+  final notificationStreamProvider =
+      NotificationStreamProvider(authManager: authManager);
   final tagProvider = TagProvider(authManager: authManager);
 
   await deviceInfoProvider.initializeDeviceInfo();
@@ -229,7 +237,9 @@ class MyApp extends StatelessWidget {
             ),
           ),
           routes: {
-            '/login': (context) => MaintenanceBanner(authManager: authManager, child: LoginPage(authManager: authManager)),
+            '/login': (context) => MaintenanceBanner(
+                authManager: authManager,
+                child: LoginPage(authManager: authManager)),
           },
         );
       },
@@ -300,7 +310,9 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
                 ),
                 IconButton(
                   icon: Icon(
-                    themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                    themeProvider.isDarkMode
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
                     color: Colors.white,
                   ),
                   onPressed: () => themeProvider.toggleTheme(),

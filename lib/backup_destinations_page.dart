@@ -18,7 +18,8 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<BackupDestinationProvider>(context, listen: false).fetchDestinations();
+      Provider.of<BackupDestinationProvider>(context, listen: false)
+          .fetchDestinations();
     });
   }
 
@@ -35,9 +36,12 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
     });
   }
 
-  List<BackupDestination> _filterDestinations(List<BackupDestination> destinations) {
+  List<BackupDestination> _filterDestinations(
+      List<BackupDestination> destinations) {
     return destinations.where((destination) {
-      return destination.label.toLowerCase().contains(_searchQuery.toLowerCase());
+      return destination.label
+          .toLowerCase()
+          .contains(_searchQuery.toLowerCase());
     }).toList();
   }
 
@@ -85,13 +89,14 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search by label...',
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-          icon: Icon(Icons.clear, color: theme.colorScheme.primary),
-          onPressed: _clearSearch,
-        )
+                icon: Icon(Icons.clear, color: theme.colorScheme.primary),
+                onPressed: _clearSearch,
+              )
             : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
@@ -117,7 +122,8 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
           return _buildEmptyWidget();
         }
 
-        final filteredDestinations = _filterDestinations(backupDestinationProvider.destinations);
+        final filteredDestinations =
+            _filterDestinations(backupDestinationProvider.destinations);
 
         return RefreshIndicator(
           onRefresh: () => backupDestinationProvider.fetchDestinations(),
@@ -130,7 +136,8 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
               return BackupDestinationListItem(
                 destination: destination,
                 onEdit: () => _showEditDestinationDialog(context, destination),
-                onDelete: () => _showDeleteConfirmationDialog(context, destination),
+                onDelete: () =>
+                    _showDeleteConfirmationDialog(context, destination),
               );
             },
           ),
@@ -192,7 +199,8 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
     );
   }
 
-  void _showEditDestinationDialog(BuildContext context, BackupDestination destination) {
+  void _showEditDestinationDialog(
+      BuildContext context, BackupDestination destination) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -207,13 +215,15 @@ class _BackupDestinationsPageState extends State<BackupDestinationsPage> {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, BackupDestination destination) {
+  void _showDeleteConfirmationDialog(
+      BuildContext context, BackupDestination destination) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Delete Backup Destination'),
-          content: Text('Are you sure you want to delete "${destination.label}"?'),
+          content:
+              Text('Are you sure you want to delete "${destination.label}"?'),
           actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
@@ -256,11 +266,13 @@ class BackupDestinationListItem extends StatelessWidget {
         leading: _buildDestinationIcon(context),
         title: Text(
           destination.label,
-          style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+          style: theme.textTheme.titleMedium
+              ?.copyWith(color: theme.colorScheme.onBackground),
         ),
         subtitle: Text(
           destination.typeHuman,
-          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
+          style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onBackground.withOpacity(0.7)),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -316,7 +328,8 @@ class BackupDestinationDialog extends StatefulWidget {
   BackupDestinationDialog({this.destination, required this.onSave});
 
   @override
-  _BackupDestinationDialogState createState() => _BackupDestinationDialogState();
+  _BackupDestinationDialogState createState() =>
+      _BackupDestinationDialogState();
 }
 
 class _BackupDestinationDialogState extends State<BackupDestinationDialog> {
@@ -342,7 +355,9 @@ class _BackupDestinationDialogState extends State<BackupDestinationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.destination == null ? 'Add Backup Destination' : 'Edit Backup Destination'),
+      title: Text(widget.destination == null
+          ? 'Add Backup Destination'
+          : 'Edit Backup Destination'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -408,7 +423,8 @@ class _BackupDestinationDialogState extends State<BackupDestinationDialog> {
                   initialValue: _s3Endpoint,
                   decoration: InputDecoration(labelText: 'S3 Endpoint'),
                   validator: (value) {
-                    if (_type == 'custom_s3' && (value == null || value.isEmpty)) {
+                    if (_type == 'custom_s3' &&
+                        (value == null || value.isEmpty)) {
                       return 'Please enter an S3 endpoint';
                     }
                     return null;
@@ -436,7 +452,8 @@ class _BackupDestinationDialogState extends State<BackupDestinationDialog> {
                 userId: widget.destination?.userId ?? 0,
                 label: _label,
                 type: _type,
-                typeHuman: _type,  // This should be properly mapped in a real scenario
+                typeHuman:
+                    _type, // This should be properly mapped in a real scenario
                 s3BucketName: _s3BucketName,
                 pathStyleEndpoint: _pathStyleEndpoint,
                 s3Region: _s3Region,

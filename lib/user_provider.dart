@@ -25,7 +25,8 @@ class UserProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse.containsKey('token')) {
+        if (jsonResponse is Map<String, dynamic> &&
+            jsonResponse.containsKey('token')) {
           await authManager.login(jsonResponse['token']);
           return true;
         } else {
@@ -53,7 +54,8 @@ class UserProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse.containsKey('data')) {
+        if (jsonResponse is Map<String, dynamic> &&
+            jsonResponse.containsKey('data')) {
           _user = User.fromJson(jsonResponse);
           notifyListeners();
           return true;

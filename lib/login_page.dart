@@ -63,8 +63,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       curve: Curves.easeIn,
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _slideAnimationController, curve: Curves.easeOutCubic),
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+      CurvedAnimation(
+          parent: _slideAnimationController, curve: Curves.easeOutCubic),
     );
 
     // Stagger animations
@@ -91,7 +93,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Future<void> _loadBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _baseUrl = prefs.getString('api_base_url') ?? 'https://app.vanguardbackup.com';
+      _baseUrl =
+          prefs.getString('api_base_url') ?? 'https://app.vanguardbackup.com';
     });
   }
 
@@ -137,16 +140,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           'device_name': _deviceName,
         });
 
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: requestBody,
-        ).timeout(const Duration(seconds: 10));
+        final response = await http
+            .post(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: requestBody,
+            )
+            .timeout(const Duration(seconds: 10));
 
-        if (response.headers['content-type']?.contains('application/json') == true) {
+        if (response.headers['content-type']?.contains('application/json') ==
+            true) {
           final responseBody = jsonDecode(response.body);
 
           if (response.statusCode == 200) {
@@ -154,32 +160,41 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             await widget.authManager.setBaseUrl(_baseUrl);
             await widget.authManager.login(token);
 
-            final userProvider = Provider.of<UserProvider>(context, listen: false);
+            final userProvider =
+                Provider.of<UserProvider>(context, listen: false);
             await userProvider.fetchUser();
 
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => MainNavigationWrapper(authManager: widget.authManager)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MainNavigationWrapper(authManager: widget.authManager)),
             );
           } else if (response.statusCode == 422) {
             if (responseBody['errors'] != null) {
               setState(() {
-                _errors = Map<String, String>.from(responseBody['errors'].map((key, value) => MapEntry(key, value[0])));
+                _errors = Map<String, String>.from(responseBody['errors']
+                    .map((key, value) => MapEntry(key, value[0])));
               });
             } else if (responseBody['message'] != null) {
               _showErrorDialog(responseBody['message']);
             }
           } else {
-            _showErrorDialog('Unexpected server response: ${response.statusCode}\n${responseBody}');
+            _showErrorDialog(
+                'Unexpected server response: ${response.statusCode}\n${responseBody}');
           }
         } else {
-          _showErrorDialog('Unexpected response from server. Received non-JSON response. Status code: ${response.statusCode}');
+          _showErrorDialog(
+              'Unexpected response from server. Received non-JSON response. Status code: ${response.statusCode}');
         }
       } on SocketException catch (_) {
-        _showErrorDialog('Network error: Unable to connect to the server. Please check your internet connection and try again.');
+        _showErrorDialog(
+            'Network error: Unable to connect to the server. Please check your internet connection and try again.');
       } on TimeoutException catch (_) {
-        _showErrorDialog('Connection timed out. Please check your internet connection and try again.');
+        _showErrorDialog(
+            'Connection timed out. Please check your internet connection and try again.');
       } on FormatException catch (_) {
-        _showErrorDialog('Unexpected response format from the server. Please check the API endpoint.');
+        _showErrorDialog(
+            'Unexpected response format from the server. Please check the API endpoint.');
       } catch (e) {
         _showErrorDialog('An unexpected error occurred: $e');
       } finally {
@@ -195,13 +210,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Login Error', style: TextStyle(fontFamily: 'Poppins', color: Colors.white)),
-          content: Text(message, style: const TextStyle(fontFamily: 'Poppins', color: Colors.white)),
+          title: const Text('Login Error',
+              style: TextStyle(fontFamily: 'Poppins', color: Colors.white)),
+          content: Text(message,
+              style:
+                  const TextStyle(fontFamily: 'Poppins', color: Colors.white)),
           backgroundColor: Colors.grey[900],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           actions: <Widget>[
             TextButton(
-              child: const Text('OK', style: TextStyle(fontFamily: 'Poppins', color: Colors.white)),
+              child: const Text('OK',
+                  style: TextStyle(fontFamily: 'Poppins', color: Colors.white)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -239,7 +259,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           _buildTextField(
                             labelText: 'Email',
                             errorText: _errors['email'],
-                            prefixIcon: const HeroIcon(HeroIcons.envelope, color: Colors.white70),
+                            prefixIcon: const HeroIcon(HeroIcons.envelope,
+                                color: Colors.white70),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
@@ -254,7 +275,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           _buildTextField(
                             labelText: 'Password',
                             errorText: _errors['password'],
-                            prefixIcon: const HeroIcon(HeroIcons.lockClosed, color: Colors.white70),
+                            prefixIcon: const HeroIcon(HeroIcons.lockClosed,
+                                color: Colors.white70),
                             obscureText: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -278,7 +300,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   labelText: 'API Base URL',
                                   hintText: 'https://app.vanguardbackup.com',
                                   errorText: _errors['baseUrl'],
-                                  prefixIcon: const HeroIcon(HeroIcons.globeAlt, color: Colors.white70),
+                                  prefixIcon: const HeroIcon(HeroIcons.globeAlt,
+                                      color: Colors.white70),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter the API base URL';
@@ -294,7 +317,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   initialValue: _deviceName,
                                   labelText: 'Device Name',
                                   errorText: _errors['device_name'],
-                                  prefixIcon: const HeroIcon(HeroIcons.devicePhoneMobile, color: Colors.white70),
+                                  prefixIcon: const HeroIcon(
+                                      HeroIcons.devicePhoneMobile,
+                                      color: Colors.white70),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a device name';
@@ -307,7 +332,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            crossFadeState: _showAdvanced ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                            crossFadeState: _showAdvanced
+                                ? CrossFadeState.showSecond
+                                : CrossFadeState.showFirst,
                             duration: const Duration(milliseconds: 300),
                           ),
                           const SizedBox(height: 32),
@@ -333,24 +360,30 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       'assets/logo.svg',
       height: 48,
       color: Colors.white,
-    ).animate(
-      onPlay: (controller) => controller.forward(),
-    ).scale(
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-      begin: const Offset(0.9, 0.9),
-      end: const Offset(1.0, 1.0),
-    ).then(delay: 200.ms).scale(
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-      begin: const Offset(1.0, 1.0),
-      end: const Offset(1.1, 1.1),
-    ).then(delay: 200.ms).scale(
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-      begin: const Offset(1.1, 1.1),
-      end: const Offset(1.0, 1.0),
-    );
+    )
+        .animate(
+          onPlay: (controller) => controller.forward(),
+        )
+        .scale(
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+          begin: const Offset(0.9, 0.9),
+          end: const Offset(1.0, 1.0),
+        )
+        .then(delay: 200.ms)
+        .scale(
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+          begin: const Offset(1.0, 1.0),
+          end: const Offset(1.1, 1.1),
+        )
+        .then(delay: 200.ms)
+        .scale(
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+          begin: const Offset(1.1, 1.1),
+          end: const Offset(1.0, 1.0),
+        );
   }
 
   Widget _buildMarketingContent() {
@@ -376,7 +409,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             fontFamily: 'Poppins',
           ),
         ),
-      ].animate(interval: const Duration(milliseconds: 100)).fadeIn(duration: const Duration(milliseconds: 500)),
+      ]
+          .animate(interval: const Duration(milliseconds: 100))
+          .fadeIn(duration: const Duration(milliseconds: 500)),
     );
   }
 
@@ -393,59 +428,59 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        labelStyle: const TextStyle(
-          color: Colors.white70,
-          fontFamily: 'Poppins',
+        TextFormField(
+          initialValue: initialValue,
+          decoration: InputDecoration(
+            labelText: labelText,
+            hintText: hintText,
+            labelStyle: const TextStyle(
+              color: Colors.white70,
+              fontFamily: 'Poppins',
+            ),
+            hintStyle: const TextStyle(
+              color: Colors.white30,
+              fontFamily: 'Poppins',
+            ),
+            filled: true,
+            fillColor: Colors.white10,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.white, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.red[400]!, width: 2),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.red[400]!, width: 2),
+            ),
+            prefixIcon: prefixIcon,
+          ),
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'Poppins',
+          ),
+          obscureText: obscureText,
+          validator: validator,
+          onSaved: onSaved,
         ),
-        hintStyle: const TextStyle(
-          color: Colors.white30,
-          fontFamily: 'Poppins',
-        ),
-        filled: true,
-        fillColor: Colors.white10,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red[400]!, width: 2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red[400]!, width: 2),
-        ),
-        prefixIcon: prefixIcon,
-      ),
-      style: const TextStyle(
-        color: Colors.white,
-        fontFamily: 'Poppins',
-      ),
-      obscureText: obscureText,
-      validator: validator,
-      onSaved: onSaved,
-    ),
-    if (errorText != null)
-    Padding(
-    padding: const EdgeInsets.only(top: 8.0, left: 12.0),
-    child: Text(
-    errorText,
-      style: TextStyle(
-        color: Colors.red[400],
-        fontFamily: 'Poppins',
-        fontSize: 12,
-      ),
-    ),
-    ),
+        if (errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 12.0),
+            child: Text(
+              errorText,
+              style: TextStyle(
+                color: Colors.red[400],
+                fontFamily: 'Poppins',
+                fontSize: 12,
+              ),
+            ),
+          ),
       ],
     ).animate().fadeIn(duration: const Duration(milliseconds: 300));
   }
@@ -497,29 +532,29 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       child: _isLoading
           ? _buildLoadingIndicator()
           : Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: ElevatedButton(
-          onPressed: _login,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            minimumSize: const Size(double.infinity, 50),
-          ),
-          child: const Text(
-            'Login',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.black,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ).animate().scale(duration: const Duration(milliseconds: 200)),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ).animate().scale(duration: const Duration(milliseconds: 200)),
     );
   }
 
@@ -560,11 +595,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           text: 'GitHub repository',
           url: 'https://github.com/vanguardbackup/vanguard',
         ),
-      ].animate(interval: const Duration(milliseconds: 100)).fadeIn(duration: const Duration(milliseconds: 300)),
+      ]
+          .animate(interval: const Duration(milliseconds: 100))
+          .fadeIn(duration: const Duration(milliseconds: 300)),
     );
   }
 
-  Widget _buildLinkButton({required HeroIcons icon, required String text, required String url}) {
+  Widget _buildLinkButton(
+      {required HeroIcons icon, required String text, required String url}) {
     return InkWell(
       onTap: () => _launchUrl(url),
       borderRadius: BorderRadius.circular(8),
@@ -604,7 +642,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       debugPrint('Could not launch $url');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Could not open the link. Please try again later.'),
+          content:
+              const Text('Could not open the link. Please try again later.'),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
@@ -623,14 +662,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               'assets/logo.svg',
               height: 48,
               color: Colors.white,
-            ).animate(
-              onPlay: (controller) => controller.repeat(reverse: true),
-            ).scale(
-              duration: const Duration(seconds: 2),
-              begin: const Offset(0.9, 0.9),
-              end: const Offset(1.1, 1.1),
-              curve: Curves.easeInOut,
-            ),
+            )
+                .animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                )
+                .scale(
+                  duration: const Duration(seconds: 2),
+                  begin: const Offset(0.9, 0.9),
+                  end: const Offset(1.1, 1.1),
+                  curve: Curves.easeInOut,
+                ),
             const SizedBox(height: 24),
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -638,6 +679,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ],
         ),
       ),
-    ).animate().fadeOut(delay: const Duration(seconds: 1), duration: const Duration(milliseconds: 500));
+    ).animate().fadeOut(
+        delay: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 500));
   }
 }

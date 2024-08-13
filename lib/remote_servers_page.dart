@@ -80,13 +80,14 @@ class _RemoteServersPageState extends State<RemoteServersPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search by label...',
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-          icon: Icon(Icons.clear, color: theme.colorScheme.primary),
-          onPressed: _clearSearch,
-        )
+                icon: Icon(Icons.clear, color: theme.colorScheme.primary),
+                onPressed: _clearSearch,
+              )
             : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
@@ -184,11 +185,13 @@ class RemoteServerListItem extends StatelessWidget {
         leading: _buildServerIcon(context),
         title: Text(
           server.label,
-          style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+          style: theme.textTheme.titleMedium
+              ?.copyWith(color: theme.colorScheme.onBackground),
         ),
         subtitle: Text(
           server.connection.ipAddress,
-          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
+          style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onBackground.withOpacity(0.7)),
         ),
         trailing: _buildStatusIcon(context, server.status.connectivity),
         onTap: () {
@@ -227,7 +230,8 @@ class RemoteServerListItem extends StatelessWidget {
       case 'disconnected':
         return HeroIcon(HeroIcons.xMark, color: Colors.red, size: 24);
       default:
-        return HeroIcon(HeroIcons.questionMarkCircle, color: Colors.grey, size: 24);
+        return HeroIcon(HeroIcons.questionMarkCircle,
+            color: Colors.grey, size: 24);
     }
   }
 }
@@ -243,11 +247,13 @@ class RemoteServerDetailPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('Server Details', style: TextStyle(color: theme.colorScheme.onBackground)),
+        title: Text('Server Details',
+            style: TextStyle(color: theme.colorScheme.onBackground)),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: HeroIcon(HeroIcons.arrowLeft, color: theme.colorScheme.onBackground),
+          icon: HeroIcon(HeroIcons.arrowLeft,
+              color: theme.colorScheme.onBackground),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -258,31 +264,44 @@ class RemoteServerDetailPage extends StatelessWidget {
           children: [
             Text(
               server.label,
-              style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: theme.colorScheme.onBackground,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 24),
-            _buildDetailItem(context, HeroIcons.server, 'IP Address', server.connection.ipAddress),
-            _buildDetailItem(context, HeroIcons.user, 'Username', server.connection.username),
-            _buildDetailItem(context, HeroIcons.lockClosed, 'Database Password', server.connection.isDatabasePasswordSet ? 'Set' : 'Not Set'),
-            _buildDetailItem(context, HeroIcons.signalSlash, 'Port', server.connection.port.toString()),
-            _buildDetailItem(context, HeroIcons.signal, 'Connectivity', _capitalizeFirstLetter(server.status.connectivity)),
-            _buildDetailItem(context, HeroIcons.clock, 'Last Connected', _formatDate(server.status.lastConnectedAt)),
-            _buildDetailItem(context, HeroIcons.calendar, 'Created At', _formatDate(server.createdAt)),
-            _buildDetailItem(context, HeroIcons.pencil, 'Updated At', _formatDate(server.updatedAt)),
+            _buildDetailItem(context, HeroIcons.server, 'IP Address',
+                server.connection.ipAddress),
+            _buildDetailItem(context, HeroIcons.user, 'Username',
+                server.connection.username),
+            _buildDetailItem(context, HeroIcons.lockClosed, 'Database Password',
+                server.connection.isDatabasePasswordSet ? 'Set' : 'Not Set'),
+            _buildDetailItem(context, HeroIcons.signalSlash, 'Port',
+                server.connection.port.toString()),
+            _buildDetailItem(context, HeroIcons.signal, 'Connectivity',
+                _capitalizeFirstLetter(server.status.connectivity)),
+            _buildDetailItem(context, HeroIcons.clock, 'Last Connected',
+                _formatDate(server.status.lastConnectedAt)),
+            _buildDetailItem(context, HeroIcons.calendar, 'Created At',
+                _formatDate(server.createdAt)),
+            _buildDetailItem(context, HeroIcons.pencil, 'Updated At',
+                _formatDate(server.updatedAt)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, HeroIcons icon, String label, String value) {
+  Widget _buildDetailItem(
+      BuildContext context, HeroIcons icon, String label, String value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeroIcon(icon, color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
+          HeroIcon(icon,
+              color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -290,12 +309,15 @@ class RemoteServerDetailPage extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
                 Text(
                   value,
-                  style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 16),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground, fontSize: 16),
                 ),
               ],
             ),
@@ -311,6 +333,8 @@ class RemoteServerDetailPage extends StatelessWidget {
   }
 
   String _capitalizeFirstLetter(String text) {
-    return text.isEmpty ? '' : text[0].toUpperCase() + text.substring(1).toLowerCase();
+    return text.isEmpty
+        ? ''
+        : text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 }

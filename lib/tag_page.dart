@@ -104,13 +104,14 @@ class _TagsPageState extends State<TagsPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search by label...',
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-          icon: Icon(Icons.clear, color: theme.colorScheme.primary),
-          onPressed: _clearSearch,
-        )
+                icon: Icon(Icons.clear, color: theme.colorScheme.primary),
+                onPressed: _clearSearch,
+              )
             : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
@@ -233,14 +234,17 @@ class _TagsPageState extends State<TagsPage> {
               child: Text('Add'),
               onPressed: () {
                 if (labelController.text.isNotEmpty) {
-                  Provider.of<TagProvider>(context, listen: false).createTag(
+                  Provider.of<TagProvider>(context, listen: false)
+                      .createTag(
                     labelController.text,
                     description: descriptionController.text,
-                  ).then((_) {
+                  )
+                      .then((_) {
                     Navigator.of(context).pop();
                     _showSnackBar('Tag created successfully', isSuccess: true);
                   }).catchError((error) {
-                    _showSnackBar('Failed to create tag: $error', isSuccess: false);
+                    _showSnackBar('Failed to create tag: $error',
+                        isSuccess: false);
                   });
                 }
               },
@@ -292,15 +296,18 @@ class _TagsPageState extends State<TagsPage> {
               child: Text('Update'),
               onPressed: () {
                 if (labelController.text.isNotEmpty) {
-                  Provider.of<TagProvider>(context, listen: false).updateTag(
+                  Provider.of<TagProvider>(context, listen: false)
+                      .updateTag(
                     tag.id,
                     label: labelController.text,
                     description: descriptionController.text,
-                  ).then((_) {
+                  )
+                      .then((_) {
                     Navigator.of(context).pop();
                     _showSnackBar('Tag updated successfully', isSuccess: true);
                   }).catchError((error) {
-                    _showSnackBar('Failed to update tag: $error', isSuccess: false);
+                    _showSnackBar('Failed to update tag: $error',
+                        isSuccess: false);
                   });
                 }
               },
@@ -330,11 +337,14 @@ class _TagsPageState extends State<TagsPage> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
-                Provider.of<TagProvider>(context, listen: false).deleteTag(tag.id).then((_) {
+                Provider.of<TagProvider>(context, listen: false)
+                    .deleteTag(tag.id)
+                    .then((_) {
                   Navigator.of(context).pop();
                   _showSnackBar('Tag deleted successfully', isSuccess: true);
                 }).catchError((error) {
-                  _showSnackBar('Failed to delete tag: $error', isSuccess: false);
+                  _showSnackBar('Failed to delete tag: $error',
+                      isSuccess: false);
                 });
               },
             ),
@@ -350,7 +360,8 @@ class TagListItem extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  TagListItem({required this.tag, required this.onEdit, required this.onDelete});
+  TagListItem(
+      {required this.tag, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -363,15 +374,17 @@ class TagListItem extends StatelessWidget {
         leading: _buildTagIcon(context),
         title: Text(
           tag.label,
-          style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+          style: theme.textTheme.titleMedium
+              ?.copyWith(color: theme.colorScheme.onBackground),
         ),
         subtitle: tag.description != null && tag.description!.isNotEmpty
             ? Text(
-          tag.description!,
-          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        )
+                tag.description!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onBackground.withOpacity(0.7)),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -428,11 +441,13 @@ class TagDetailPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('Tag Details', style: TextStyle(color: theme.colorScheme.onBackground)),
+        title: Text('Tag Details',
+            style: TextStyle(color: theme.colorScheme.onBackground)),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: HeroIcon(HeroIcons.arrowLeft, color: theme.colorScheme.onBackground),
+          icon: HeroIcon(HeroIcons.arrowLeft,
+              color: theme.colorScheme.onBackground),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -443,47 +458,58 @@ class TagDetailPage extends StatelessWidget {
           children: [
             Text(
               tag.label,
-              style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: theme.colorScheme.onBackground,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             _buildDetailItem(context, HeroIcons.tag, 'Label', tag.label),
             if (tag.description != null && tag.description!.isNotEmpty)
-              _buildDetailItem(context, HeroIcons.documentText, 'Description', tag.description!),
-            _buildDetailItem(context, HeroIcons.calendar, 'Created At', _formatDate(tag.createdAt)),
-            _buildDetailItem(context, HeroIcons.pencil, 'Updated At', _formatDate(tag.updatedAt)),
+              _buildDetailItem(context, HeroIcons.documentText, 'Description',
+                  tag.description!),
+            _buildDetailItem(context, HeroIcons.calendar, 'Created At',
+                _formatDate(tag.createdAt)),
+            _buildDetailItem(context, HeroIcons.pencil, 'Updated At',
+                _formatDate(tag.updatedAt)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, HeroIcons icon, String label, String value) {
+  Widget _buildDetailItem(
+      BuildContext context, HeroIcons icon, String label, String value) {
     final theme = Theme.of(context);
     return Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-    child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    HeroIcon(icon, color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
-    const SizedBox(width: 16),
-    Expanded(
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeroIcon(icon,
+              color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      const SizedBox(height: 4),
-      Text(
-        value,
-        style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 16),
-      ),
-    ],
-    ),
-    ),
-    ],
-    ),
     );
   }
 

@@ -22,7 +22,8 @@ class BackupTaskLogProvider with ChangeNotifier {
 
   BackupTaskLogProvider({required this.authManager});
 
-  Future<bool> fetchLogs({int page = 1, int perPage = 10, String? search}) async {
+  Future<bool> fetchLogs(
+      {int page = 1, int perPage = 10, String? search}) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -52,7 +53,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] is List) {
           final newLogs = (jsonResponse['data'] as List)
-              .map<BackupTaskLogEntry>((logJson) => BackupTaskLogEntry.fromJson(logJson))
+              .map<BackupTaskLogEntry>(
+                  (logJson) => BackupTaskLogEntry.fromJson(logJson))
               .toList();
 
           if (page == 1) {
@@ -72,7 +74,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         }
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchLogs(page: page, perPage: perPage, search: search);
       } else {
@@ -88,7 +91,8 @@ class BackupTaskLogProvider with ChangeNotifier {
 
   Future<bool> loadMoreLogs({int perPage = 10}) async {
     if (_hasMoreLogs) {
-      return await fetchLogs(page: _currentPage + 1, perPage: perPage, search: _searchQuery);
+      return await fetchLogs(
+          page: _currentPage + 1, perPage: perPage, search: _searchQuery);
     }
     return false;
   }
@@ -120,7 +124,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         return BackupTaskLogEntry.fromJson(jsonResponse['data']);
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getLog(id);
       } else {
@@ -157,7 +162,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return deleteLog(id);
       } else {
@@ -187,7 +193,8 @@ class BackupTaskLogProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 

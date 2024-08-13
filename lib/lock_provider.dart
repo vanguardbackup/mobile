@@ -79,7 +79,11 @@ class LockProvider with ChangeNotifier {
             return {'success': false, 'message': 'Authentication failed'};
           }
         } else {
-          return {'success': false, 'message': 'Biometric authentication is not available on this device'};
+          return {
+            'success': false,
+            'message':
+                'Biometric authentication is not available on this device'
+          };
         }
       } on PlatformException catch (e) {
         return {'success': false, 'message': 'Error: ${e.message}'};
@@ -88,7 +92,6 @@ class LockProvider with ChangeNotifier {
     // If biometrics are not used, return false and let the UI handle PIN entry
     return {'success': false, 'message': 'PIN authentication required'};
   }
-
 
   Future<bool> checkPin(String enteredPin) async {
     final storedPin = await _secureStorage.read(key: 'pin');

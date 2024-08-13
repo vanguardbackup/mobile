@@ -37,7 +37,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       _loadMoreLogs();
     }
   }
@@ -46,7 +47,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
-    final logProvider = Provider.of<BackupTaskLogProvider>(context, listen: false);
+    final logProvider =
+        Provider.of<BackupTaskLogProvider>(context, listen: false);
     await logProvider.fetchLogs(perPage: 20, search: _searchQuery);
 
     setState(() => _isLoading = false);
@@ -56,7 +58,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
-    final logProvider = Provider.of<BackupTaskLogProvider>(context, listen: false);
+    final logProvider =
+        Provider.of<BackupTaskLogProvider>(context, listen: false);
     await logProvider.loadMoreLogs(perPage: 20);
 
     setState(() => _isLoading = false);
@@ -72,7 +75,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     });
   }
 
-  void _debounce(VoidCallback callback, {Duration duration = const Duration(milliseconds: 500)}) {
+  void _debounce(VoidCallback callback,
+      {Duration duration = const Duration(milliseconds: 500)}) {
     if (_debounceTimer != null) {
       _debounceTimer!.cancel();
     }
@@ -136,16 +140,17 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search logs...',
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-          icon: Icon(Icons.clear, color: theme.colorScheme.primary),
-          onPressed: () {
-            _searchController.clear();
-            _onSearchChanged('');
-          },
-        )
+                icon: Icon(Icons.clear, color: theme.colorScheme.primary),
+                onPressed: () {
+                  _searchController.clear();
+                  _onSearchChanged('');
+                },
+              )
             : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
@@ -168,7 +173,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
 
         return ListView.builder(
           controller: _scrollController,
-          itemCount: logProvider.logs.length + (logProvider.hasMoreLogs ? 1 : 0),
+          itemCount:
+              logProvider.logs.length + (logProvider.hasMoreLogs ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == logProvider.logs.length) {
               return _buildLoadingIndicator();
@@ -222,13 +228,15 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
   Widget _buildLogItem(BuildContext context, BackupTaskLogEntry log) {
     final theme = Theme.of(context);
     return FutureBuilder<BackupTask?>(
-      future: Provider.of<BackupTaskProvider>(context, listen: false).getBackupTask(log.backupTaskId),
+      future: Provider.of<BackupTaskProvider>(context, listen: false)
+          .getBackupTask(log.backupTaskId),
       builder: (context, snapshot) {
         final backupTask = snapshot.data;
         return Card(
           margin: EdgeInsets.only(bottom: 8),
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
             leading: Container(
               padding: EdgeInsets.all(8),
@@ -237,18 +245,22 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: HeroIcon(
-                log.status == 'successful' ? HeroIcons.checkCircle : HeroIcons.xCircle,
+                log.status == 'successful'
+                    ? HeroIcons.checkCircle
+                    : HeroIcons.xCircle,
                 color: log.status == 'successful' ? Colors.green : Colors.red,
                 size: 24,
               ),
             ),
             title: Text(
               backupTask?.label ?? 'Backup Task #${log.backupTaskId}',
-              style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(color: theme.colorScheme.onBackground),
             ),
             subtitle: Text(
               'Status: ${log.status}\nFinished at: ${DateFormat('MMM d, yyyy \'at\' h:mm a').format(log.finishedAt)}',
-              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
+              style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onBackground.withOpacity(0.7)),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -297,11 +309,14 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
-                Provider.of<BackupTaskLogProvider>(context, listen: false).deleteLog(log.id).then((_) {
+                Provider.of<BackupTaskLogProvider>(context, listen: false)
+                    .deleteLog(log.id)
+                    .then((_) {
                   Navigator.of(context).pop();
                   _showSnackBar('Log deleted successfully', isSuccess: true);
                 }).catchError((error) {
-                  _showSnackBar('Failed to delete log: $error', isSuccess: false);
+                  _showSnackBar('Failed to delete log: $error',
+                      isSuccess: false);
                 });
               },
             ),
@@ -311,14 +326,16 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     );
   }
 
-  Widget _buildLogDetailItem(BuildContext context, String label, String value, {required HeroIcons icon}) {
+  Widget _buildLogDetailItem(BuildContext context, String label, String value,
+      {required HeroIcons icon}) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeroIcon(icon, color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
+          HeroIcon(icon,
+              color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -326,12 +343,15 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
                 Text(
                   value,
-                  style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 16),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground, fontSize: 16),
                 ),
               ],
             ),
@@ -341,7 +361,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     );
   }
 
-  void _showLogDetails(BuildContext context, BackupTaskLogEntry log, BackupTask? backupTask) {
+  void _showLogDetails(
+      BuildContext context, BackupTaskLogEntry log, BackupTask? backupTask) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -366,14 +387,33 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 16),
-                  _buildLogDetailItem(context, 'Status', log.status, icon: HeroIcons.informationCircle),
-                  _buildLogDetailItem(context, 'Backup Task ID', log.backupTaskId.toString(), icon: HeroIcons.hashtag),
-                  _buildLogDetailItem(context, 'Finished At', DateFormat('MMM d, yyyy \'at\' h:mm a').format(log.finishedAt), icon: HeroIcons.clock),
-                  _buildLogDetailItem(context, 'Created At', DateFormat('MMM d, yyyy \'at\' h:mm a').format(log.createdAt), icon: HeroIcons.calendar),
+                  _buildLogDetailItem(context, 'Status', log.status,
+                      icon: HeroIcons.informationCircle),
+                  _buildLogDetailItem(
+                      context, 'Backup Task ID', log.backupTaskId.toString(),
+                      icon: HeroIcons.hashtag),
+                  _buildLogDetailItem(
+                      context,
+                      'Finished At',
+                      DateFormat('MMM d, yyyy \'at\' h:mm a')
+                          .format(log.finishedAt),
+                      icon: HeroIcons.clock),
+                  _buildLogDetailItem(
+                      context,
+                      'Created At',
+                      DateFormat('MMM d, yyyy \'at\' h:mm a')
+                          .format(log.createdAt),
+                      icon: HeroIcons.calendar),
                   if (backupTask != null) ...[
-                    _buildLogDetailItem(context, 'Source Type', backupTask.source.type, icon: HeroIcons.folder),
-                    _buildLogDetailItem(context, 'Source Path', backupTask.source.path, icon: HeroIcons.folderOpen),
-                    _buildLogDetailItem(context, 'Storage Path', backupTask.storage.path, icon: HeroIcons.archiveBox),
+                    _buildLogDetailItem(
+                        context, 'Source Type', backupTask.source.type,
+                        icon: HeroIcons.folder),
+                    _buildLogDetailItem(
+                        context, 'Source Path', backupTask.source.path,
+                        icon: HeroIcons.folderOpen),
+                    _buildLogDetailItem(
+                        context, 'Storage Path', backupTask.storage.path,
+                        icon: HeroIcons.archiveBox),
                   ],
                   SizedBox(height: 16),
                   Text(
@@ -386,7 +426,8 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.outline),
                     ),
                     child: Text(log.output),
                   ),

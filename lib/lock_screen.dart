@@ -13,7 +13,8 @@ class LockScreen extends StatefulWidget {
   _LockScreenState createState() => _LockScreenState();
 }
 
-class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, TickerProviderStateMixin {
+class _LockScreenState extends State<LockScreen>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   bool _isChecking = true;
   late AnimationController _lockIconController;
   late Animation<double> _lockIconAnimation;
@@ -30,7 +31,8 @@ class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, Ti
       duration: const Duration(milliseconds: 300), // Increased animation speed
       vsync: this,
     );
-    _lockIconAnimation = Tween<double>(begin: 0, end: 1).animate(_lockIconController);
+    _lockIconAnimation =
+        Tween<double>(begin: 0, end: 1).animate(_lockIconController);
   }
 
   @override
@@ -127,7 +129,9 @@ class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, Ti
           return Transform.rotate(
             angle: _lockIconAnimation.value * 2 * 3.14159,
             child: HeroIcon(
-              _lockIconAnimation.value < 0.5 ? HeroIcons.lockClosed : HeroIcons.lockOpen,
+              _lockIconAnimation.value < 0.5
+                  ? HeroIcons.lockClosed
+                  : HeroIcons.lockOpen,
               size: 48,
               color: theme.colorScheme.primary,
             ),
@@ -154,9 +158,11 @@ class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, Ti
         backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
         child: user?.personalInfo.avatarUrl == null
             ? Text(
-          user?.personalInfo.firstName.substring(0, 1).toUpperCase() ?? 'U',
-          style: TextStyle(fontSize: 48, color: theme.colorScheme.primary),
-        )
+                user?.personalInfo.firstName.substring(0, 1).toUpperCase() ??
+                    'U',
+                style:
+                    TextStyle(fontSize: 48, color: theme.colorScheme.primary),
+              )
             : null,
       ),
     );
@@ -265,7 +271,8 @@ class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, Ti
     );
   }
 
-  Future<void> _verifyPin(BuildContext context, LockProvider lockProvider, String enteredPin) async {
+  Future<void> _verifyPin(BuildContext context, LockProvider lockProvider,
+      String enteredPin) async {
     if (await lockProvider.checkPin(enteredPin)) {
       await _animateUnlock();
       lockProvider.unlockApp();

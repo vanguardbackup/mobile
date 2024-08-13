@@ -133,7 +133,8 @@ class Timestamps {
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
       lastRunLocalTime: json['last_run_local_time'],
-      pausedAt: json['paused_at'] != null ? DateTime.parse(json['paused_at']) : null,
+      pausedAt:
+          json['paused_at'] != null ? DateTime.parse(json['paused_at']) : null,
     );
   }
 }

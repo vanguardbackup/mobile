@@ -50,7 +50,8 @@ class RemoteServerProvider with ChangeNotifier {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] is List) {
           final newServers = (jsonResponse['data'] as List)
-              .map<RemoteServer>((serverJson) => RemoteServer.fromJson(serverJson))
+              .map<RemoteServer>(
+                  (serverJson) => RemoteServer.fromJson(serverJson))
               .toList();
 
           if (page == 1) {
@@ -69,7 +70,8 @@ class RemoteServerProvider with ChangeNotifier {
         }
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchServers(page: page, perPage: perPage);
       } else {
@@ -112,7 +114,8 @@ class RemoteServerProvider with ChangeNotifier {
         return RemoteServer.fromJson(jsonResponse['data']);
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getServer(id);
       } else {
@@ -152,7 +155,8 @@ class RemoteServerProvider with ChangeNotifier {
         return newServer;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return createServer(serverData);
       } else {
@@ -166,7 +170,8 @@ class RemoteServerProvider with ChangeNotifier {
     }
   }
 
-  Future<RemoteServer?> updateServer(int id, Map<String, dynamic> serverData) async {
+  Future<RemoteServer?> updateServer(
+      int id, Map<String, dynamic> serverData) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -195,7 +200,8 @@ class RemoteServerProvider with ChangeNotifier {
         return updatedServer;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return updateServer(id, serverData);
       } else {
@@ -232,7 +238,8 @@ class RemoteServerProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return deleteServer(id);
       } else {
@@ -261,7 +268,8 @@ class RemoteServerProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 

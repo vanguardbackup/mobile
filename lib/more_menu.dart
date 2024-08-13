@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'navigation_item.dart';  // Add this import
+import 'navigation_item.dart'; // Add this import
 
 class MoreMenu extends StatelessWidget {
   final Function(NavigationItem) onItemTapped;
@@ -14,16 +14,20 @@ class MoreMenu extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildMenuItem(context, 'Remote Servers', HeroIcons.server, NavigationItem.remoteServers),
-          _buildMenuItem(context, 'Backup Destinations', HeroIcons.cloudArrowUp, NavigationItem.backupDestinations),
-          _buildMenuItem(context, 'Notification Streams', HeroIcons.bellAlert, NavigationItem.notificationStreams),
+          _buildMenuItem(context, 'Remote Servers', HeroIcons.server,
+              NavigationItem.remoteServers),
+          _buildMenuItem(context, 'Backup Destinations', HeroIcons.cloudArrowUp,
+              NavigationItem.backupDestinations),
+          _buildMenuItem(context, 'Notification Streams', HeroIcons.bellAlert,
+              NavigationItem.notificationStreams),
           _buildMenuItem(context, 'Tags', HeroIcons.tag, NavigationItem.tags),
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String label, HeroIcons icon, NavigationItem item) {
+  Widget _buildMenuItem(
+      BuildContext context, String label, HeroIcons icon, NavigationItem item) {
     return ListTile(
       leading: HeroIcon(icon, style: HeroIconStyle.outline),
       title: Text(label),

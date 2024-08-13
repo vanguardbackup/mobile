@@ -21,7 +21,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<BackupTaskProvider>(context, listen: false).fetchBackupTasks();
+      Provider.of<BackupTaskProvider>(context, listen: false)
+          .fetchBackupTasks();
     });
   }
 
@@ -35,7 +36,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
   void _startPolling() {
     _pollTimer?.cancel();
     _pollTimer = Timer.periodic(Duration(seconds: 5), (_) {
-      Provider.of<BackupTaskProvider>(context, listen: false).fetchBackupTasks();
+      Provider.of<BackupTaskProvider>(context, listen: false)
+          .fetchBackupTasks();
     });
   }
 
@@ -53,8 +55,10 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
 
   List<BackupTask> _filterTasks(List<BackupTask> tasks) {
     return tasks.where((task) {
-      bool matchesSearch = task.label.toLowerCase().contains(_searchQuery.toLowerCase());
-      bool matchesType = _selectedType == null || task.source.type.toLowerCase() == _selectedType!.toLowerCase();
+      bool matchesSearch =
+          task.label.toLowerCase().contains(_searchQuery.toLowerCase());
+      bool matchesType = _selectedType == null ||
+          task.source.type.toLowerCase() == _selectedType!.toLowerCase();
       return matchesSearch && matchesType;
     }).toList();
   }
@@ -101,7 +105,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
           style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
             hintText: 'Search by label...',
-            hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            hintStyle:
+                TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
             prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -109,7 +114,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
           ),
           onChanged: (value) {
             setState(() {
@@ -130,8 +136,12 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: _selectedType,
-                    hint: Text('Filter by type', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
-                    icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                    hint: Text('Filter by type',
+                        style: TextStyle(
+                            color:
+                                theme.colorScheme.onSurface.withOpacity(0.6))),
+                    icon: Icon(Icons.arrow_drop_down,
+                        color: theme.colorScheme.primary),
                     isExpanded: true,
                     dropdownColor: theme.colorScheme.surface,
                     items: [null, 'database', 'files'].map((String? value) {
@@ -162,7 +172,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
           ],
@@ -180,7 +191,9 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
         }
 
         if (backupTaskProvider.backupTasks == null) {
-          return Center(child: CircularProgressIndicator(color: theme.colorScheme.primary));
+          return Center(
+              child:
+                  CircularProgressIndicator(color: theme.colorScheme.primary));
         }
 
         final filteredTasks = _filterTasks(backupTaskProvider.backupTasks!);
@@ -189,7 +202,8 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
           return _buildEmptyWidget();
         }
 
-        bool hasRunningTask = filteredTasks.any((task) => task.status.toLowerCase() == 'running');
+        bool hasRunningTask =
+            filteredTasks.any((task) => task.status.toLowerCase() == 'running');
         if (hasRunningTask) {
           _startPolling();
         } else {
@@ -239,9 +253,12 @@ class _BackupTasksPageState extends State<BackupTasksPage> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => provider.fetchBackupTasks(),
-            icon: HeroIcon(HeroIcons.arrowPath, color: theme.colorScheme.onPrimary, size: 18),
-            label: Text('Retry', style: TextStyle(color: theme.colorScheme.onPrimary)),
-            style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.primary),
+            icon: HeroIcon(HeroIcons.arrowPath,
+                color: theme.colorScheme.onPrimary, size: 18),
+            label: Text('Retry',
+                style: TextStyle(color: theme.colorScheme.onPrimary)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary),
           ),
         ],
       ),
@@ -302,11 +319,13 @@ class BackupTaskListItem extends StatelessWidget {
         leading: _buildTaskTypeIcon(context),
         title: Text(
           task.label,
-          style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onBackground),
+          style: theme.textTheme.titleMedium
+              ?.copyWith(color: theme.colorScheme.onBackground),
         ),
         subtitle: Text(
           '${_capitalizeFirstLetter(task.source.type)} - ${_formatSchedule(task.schedule)}',
-          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7)),
+          style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onBackground.withOpacity(0.7)),
         ),
         trailing: _buildStatusIcon(context, task.status),
         onTap: () async {
@@ -316,7 +335,8 @@ class BackupTaskListItem extends StatelessWidget {
               builder: (context) => BackupTaskDetailPage(task: task),
             ),
           );
-          Provider.of<BackupTaskProvider>(context, listen: false).fetchBackupTasks();
+          Provider.of<BackupTaskProvider>(context, listen: false)
+              .fetchBackupTasks();
         },
       ),
     );
@@ -331,7 +351,9 @@ class BackupTaskListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: HeroIcon(
-        task.source.type.toLowerCase() == 'database' ? HeroIcons.circleStack : HeroIcons.folder,
+        task.source.type.toLowerCase() == 'database'
+            ? HeroIcons.circleStack
+            : HeroIcons.folder,
         color: theme.colorScheme.primary,
         size: 24,
       ),
@@ -345,10 +367,12 @@ class BackupTaskListItem extends StatelessWidget {
         return HeroIcon(HeroIcons.check, color: Colors.green, size: 24);
       case 'running':
         return RotatingIcon(
-          child: HeroIcon(HeroIcons.arrowPath, color: theme.colorScheme.primary, size: 24),
+          child: HeroIcon(HeroIcons.arrowPath,
+              color: theme.colorScheme.primary, size: 24),
         );
       default:
-        return HeroIcon(HeroIcons.questionMarkCircle, color: Colors.grey, size: 24);
+        return HeroIcon(HeroIcons.questionMarkCircle,
+            color: Colors.grey, size: 24);
     }
   }
 
@@ -361,7 +385,9 @@ class BackupTaskListItem extends StatelessWidget {
   }
 
   String _capitalizeFirstLetter(String text) {
-    return text.isEmpty ? '' : text[0].toUpperCase() + text.substring(1).toLowerCase();
+    return text.isEmpty
+        ? ''
+        : text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 }
 
@@ -374,7 +400,8 @@ class BackupTaskDetailPage extends StatefulWidget {
   _BackupTaskDetailPageState createState() => _BackupTaskDetailPageState();
 }
 
-class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with SingleTickerProviderStateMixin {
+class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
+    with SingleTickerProviderStateMixin {
   late Timer _pollTimer;
   late BackupTask _currentTask;
   late AnimationController _animationController;
@@ -395,7 +422,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
   }
 
@@ -413,7 +441,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
   }
 
   Future<void> _pollTaskStatus() async {
-    final backupTaskProvider = Provider.of<BackupTaskProvider>(context, listen: false);
+    final backupTaskProvider =
+        Provider.of<BackupTaskProvider>(context, listen: false);
     final updatedTask = await backupTaskProvider.getBackupTask(_currentTask.id);
     if (updatedTask != null && mounted) {
       setState(() {
@@ -430,8 +459,10 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
     setState(() {
       _isLoading = true;
     });
-    final backupTaskProvider = Provider.of<BackupTaskProvider>(context, listen: false);
-    final latestLog = await backupTaskProvider.getLatestBackupTaskLog(_currentTask.id);
+    final backupTaskProvider =
+        Provider.of<BackupTaskProvider>(context, listen: false);
+    final latestLog =
+        await backupTaskProvider.getLatestBackupTaskLog(_currentTask.id);
     if (mounted) {
       setState(() {
         _latestLog = latestLog;
@@ -444,72 +475,84 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return WillPopScope(
-        onWillPop: () async {
-      await _animationController.reverse();
-      return true;
-    },
-    child: Scaffold(
-    backgroundColor: theme.scaffoldBackgroundColor,
-    appBar: AppBar(
-    title: Text('Task Details', style: TextStyle(color: theme.colorScheme.onBackground)),
-    backgroundColor: theme.scaffoldBackgroundColor,
-    elevation: 0,
-    leading: IconButton(
-    icon: HeroIcon(HeroIcons.arrowLeft, color: theme.colorScheme.onBackground),
-    onPressed: () async {
-    await _animationController.reverse();
-    Navigator.of(context).pop();
-    },
-    ),
-    ),
-    body: FadeTransition(
-    opacity: _animation,
-    child: RefreshIndicator(
-    onRefresh: _fetchLatestLog,
-    color: theme.colorScheme.primary,
-    backgroundColor: theme.cardColor,
-    child: SingleChildScrollView(
-    physics: AlwaysScrollableScrollPhysics(),
-    padding: EdgeInsets.all(16),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Text(
-    _currentTask.label,
-    style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 24, fontWeight: FontWeight.bold),
-    ),
-    SizedBox(height: 8),
-    Text(
-    _currentTask.description,
-    style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontSize: 16),
-    ),
-    SizedBox(height: 24),
-      _buildDetailItem(context, HeroIcons.clock, 'Schedule', _formatSchedule(_currentTask.schedule)),
-      _buildDetailItem(context, HeroIcons.folderOpen, 'Source', _formatSource(_currentTask.source)),
-      _buildDetailItem(context, HeroIcons.server, 'Storage', _formatStorage(_currentTask.storage)),
-      _buildDetailItem(
-        context,
-        HeroIcons.clock,
-        'Last Run',
-        _currentTask.timestamps.lastRunLocalTime ?? 'Never',
+      onWillPop: () async {
+        await _animationController.reverse();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: Text('Task Details',
+              style: TextStyle(color: theme.colorScheme.onBackground)),
+          backgroundColor: theme.scaffoldBackgroundColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: HeroIcon(HeroIcons.arrowLeft,
+                color: theme.colorScheme.onBackground),
+            onPressed: () async {
+              await _animationController.reverse();
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        body: FadeTransition(
+          opacity: _animation,
+          child: RefreshIndicator(
+            onRefresh: _fetchLatestLog,
+            color: theme.colorScheme.primary,
+            backgroundColor: theme.cardColor,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _currentTask.label,
+                    style: TextStyle(
+                        color: theme.colorScheme.onBackground,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    _currentTask.description,
+                    style: TextStyle(
+                        color: theme.colorScheme.onBackground.withOpacity(0.7),
+                        fontSize: 16),
+                  ),
+                  SizedBox(height: 24),
+                  _buildDetailItem(context, HeroIcons.clock, 'Schedule',
+                      _formatSchedule(_currentTask.schedule)),
+                  _buildDetailItem(context, HeroIcons.folderOpen, 'Source',
+                      _formatSource(_currentTask.source)),
+                  _buildDetailItem(context, HeroIcons.server, 'Storage',
+                      _formatStorage(_currentTask.storage)),
+                  _buildDetailItem(
+                    context,
+                    HeroIcons.clock,
+                    'Last Run',
+                    _currentTask.timestamps.lastRunLocalTime ?? 'Never',
+                  ),
+                  _buildDetailItem(
+                    context,
+                    HeroIcons.chartBar,
+                    'Status',
+                    _capitalizeFirstLetter(_currentTask.status),
+                    trailing: _isRunning ? _buildRotatingIcon(context) : null,
+                  ),
+                  const SizedBox(height: 32),
+                  _buildLatestLogSection(context),
+                  const SizedBox(
+                      height:
+                          80), // Add extra space at the bottom for the floating button
+                ],
+              ),
+            ),
+          ),
+        ),
+        floatingActionButton: _buildRunBackupButton(context),
       ),
-      _buildDetailItem(
-        context,
-        HeroIcons.chartBar,
-        'Status',
-        _capitalizeFirstLetter(_currentTask.status),
-        trailing: _isRunning ? _buildRotatingIcon(context) : null,
-      ),
-      const SizedBox(height: 32),
-      _buildLatestLogSection(context),
-      const SizedBox(height: 80), // Add extra space at the bottom for the floating button
-    ],
-    ),
-    ),
-    ),
-    ),
-      floatingActionButton: _buildRunBackupButton(context),
-    ),
     );
   }
 
@@ -521,7 +564,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
       foregroundColor: theme.colorScheme.onPrimary,
       icon: _isRunning
           ? _buildRotatingIcon(context)
-          : HeroIcon(HeroIcons.play, color: theme.colorScheme.onPrimary, size: 20),
+          : HeroIcon(HeroIcons.play,
+              color: theme.colorScheme.onPrimary, size: 20),
       label: Text(
         _isRunning ? 'Running...' : 'Run Task',
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -536,13 +580,20 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
       children: [
         Text(
           'Latest Backup Log',
-          style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: theme.colorScheme.onBackground,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 16),
         if (_isLoading)
-          Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
+          Center(
+              child:
+                  CircularProgressIndicator(color: theme.colorScheme.primary))
         else if (_latestLog == null)
-          Text('No log available', style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7)))
+          Text('No log available',
+              style: TextStyle(
+                  color: theme.colorScheme.onBackground.withOpacity(0.7)))
         else
           GestureDetector(
             onTap: () => _showLogModal(context),
@@ -556,13 +607,22 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Status: ${_capitalizeFirstLetter(_latestLog!.status)}',
-                            style: TextStyle(color: _getStatusColor(_latestLog!.status), fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_latestLog!.finishedAt), style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+                        Text(
+                            'Status: ${_capitalizeFirstLetter(_latestLog!.status)}',
+                            style: TextStyle(
+                                color: _getStatusColor(_latestLog!.status),
+                                fontWeight: FontWeight.bold)),
+                        Text(_formatDate(_latestLog!.finishedAt),
+                            style: TextStyle(
+                                color: theme.colorScheme.onBackground
+                                    .withOpacity(0.7))),
                       ],
                     ),
                     SizedBox(height: 8),
-                    Text('Output:', style: TextStyle(color: theme.colorScheme.onBackground, fontWeight: FontWeight.bold)),
+                    Text('Output:',
+                        style: TextStyle(
+                            color: theme.colorScheme.onBackground,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
                     Container(
                       height: 100,
@@ -573,7 +633,10 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: EdgeInsets.all(8),
-                          child: Text(_latestLog!.output, style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+                          child: Text(_latestLog!.output,
+                              style: TextStyle(
+                                  color: theme.colorScheme.onBackground
+                                      .withOpacity(0.7))),
                         ),
                       ),
                     ),
@@ -581,7 +644,9 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
                     Center(
                       child: Text(
                         'Tap to view full log',
-                        style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -602,7 +667,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
           backgroundColor: theme.dialogBackgroundColor,
           child: Container(
             padding: EdgeInsets.all(16),
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,10 +678,14 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
                   children: [
                     Text(
                       'Backup Log',
-                      style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: theme.colorScheme.onBackground,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: HeroIcon(HeroIcons.xMark, color: theme.colorScheme.onBackground),
+                      icon: HeroIcon(HeroIcons.xMark,
+                          color: theme.colorScheme.onBackground),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -624,17 +694,29 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Status: ${_capitalizeFirstLetter(_latestLog!.status)}',
-                        style: TextStyle(color: _getStatusColor(_latestLog!.status), fontWeight: FontWeight.bold)),
-                    Text(_formatDate(_latestLog!.finishedAt), style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+                    Text(
+                        'Status: ${_capitalizeFirstLetter(_latestLog!.status)}',
+                        style: TextStyle(
+                            color: _getStatusColor(_latestLog!.status),
+                            fontWeight: FontWeight.bold)),
+                    Text(_formatDate(_latestLog!.finishedAt),
+                        style: TextStyle(
+                            color: theme.colorScheme.onBackground
+                                .withOpacity(0.7))),
                   ],
                 ),
                 SizedBox(height: 16),
-                Text('Output:', style: TextStyle(color: theme.colorScheme.onBackground, fontWeight: FontWeight.bold)),
+                Text('Output:',
+                    style: TextStyle(
+                        color: theme.colorScheme.onBackground,
+                        fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Text(_latestLog!.output, style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+                    child: Text(_latestLog!.output,
+                        style: TextStyle(
+                            color: theme.colorScheme.onBackground
+                                .withOpacity(0.7))),
                   ),
                 ),
               ],
@@ -645,14 +727,17 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, HeroIcons icon, String label, String value, {Widget? trailing}) {
+  Widget _buildDetailItem(
+      BuildContext context, HeroIcons icon, String label, String value,
+      {Widget? trailing}) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeroIcon(icon, color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
+          HeroIcon(icon,
+              color: theme.colorScheme.onBackground.withOpacity(0.7), size: 24),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -660,12 +745,15 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
               children: [
                 Text(
                   label,
-                  style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: TextStyle(color: theme.colorScheme.onBackground, fontSize: 16),
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground, fontSize: 16),
                 ),
               ],
             ),
@@ -679,7 +767,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
   Widget _buildRotatingIcon(BuildContext context) {
     final theme = Theme.of(context);
     return RotatingIcon(
-      child: HeroIcon(HeroIcons.arrowPath, color: theme.colorScheme.primary, size: 24),
+      child: HeroIcon(HeroIcons.arrowPath,
+          color: theme.colorScheme.primary, size: 24),
     );
   }
 
@@ -726,7 +815,9 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
   }
 
   String _capitalizeFirstLetter(String text) {
-    return text.isEmpty ? '' : text[0].toUpperCase() + text.substring(1).toLowerCase();
+    return text.isEmpty
+        ? ''
+        : text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 
   void _showRunBackupConfirmation(BuildContext context) {
@@ -736,17 +827,23 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: theme.dialogBackgroundColor,
-          title: Text('Run Backup Task', style: TextStyle(color: theme.colorScheme.onBackground)),
-          content: Text('Are you sure you want to run this backup task now?', style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+          title: Text('Run Backup Task',
+              style: TextStyle(color: theme.colorScheme.onBackground)),
+          content: Text('Are you sure you want to run this backup task now?',
+              style: TextStyle(
+                  color: theme.colorScheme.onBackground.withOpacity(0.7))),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel', style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.7))),
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.7))),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Run', style: TextStyle(color: theme.colorScheme.primary)),
+              child: Text('Run',
+                  style: TextStyle(color: theme.colorScheme.primary)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _runBackupTask(context);
@@ -759,7 +856,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
   }
 
   void _runBackupTask(BuildContext context) async {
-    final backupTaskProvider = Provider.of<BackupTaskProvider>(context, listen: false);
+    final backupTaskProvider =
+        Provider.of<BackupTaskProvider>(context, listen: false);
 
     setState(() {
       _currentTask = _currentTask.copyWith(status: 'running');
@@ -776,7 +874,8 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
         _showSnackBar(context, response.message, SnackBarType.error);
       }
     } catch (e) {
-      _showSnackBar(context, 'An unexpected error occurred', SnackBarType.error);
+      _showSnackBar(
+          context, 'An unexpected error occurred', SnackBarType.error);
     } finally {
       // Continue polling until the task is no longer running
       _pollUntilCompleted();
@@ -805,11 +904,14 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage> with Single
             ),
             SizedBox(width: 8),
             Expanded(
-              child: Text(message, style: TextStyle(color: theme.colorScheme.onPrimary)),
+              child: Text(message,
+                  style: TextStyle(color: theme.colorScheme.onPrimary)),
             ),
           ],
         ),
-        backgroundColor: type == SnackBarType.success ? Colors.green : theme.colorScheme.error,
+        backgroundColor: type == SnackBarType.success
+            ? Colors.green
+            : theme.colorScheme.error,
         duration: Duration(seconds: 3),
         action: SnackBarAction(
           label: 'Dismiss',
@@ -834,7 +936,8 @@ class RotatingIcon extends StatefulWidget {
   _RotatingIconState createState() => _RotatingIconState();
 }
 
-class _RotatingIconState extends State<RotatingIcon> with SingleTickerProviderStateMixin {
+class _RotatingIconState extends State<RotatingIcon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -887,9 +990,11 @@ extension BackupTaskExtension on BackupTask {
       source: source ?? this.source,
       schedule: schedule ?? this.schedule,
       storage: storage ?? this.storage,
-      notificationStreamsCount: notificationStreamsCount ?? this.notificationStreamsCount,
+      notificationStreamsCount:
+          notificationStreamsCount ?? this.notificationStreamsCount,
       status: status ?? this.status,
-      hasIsolatedCredentials: hasIsolatedCredentials ?? this.hasIsolatedCredentials,
+      hasIsolatedCredentials:
+          hasIsolatedCredentials ?? this.hasIsolatedCredentials,
       timestamps: timestamps ?? this.timestamps,
     );
   }

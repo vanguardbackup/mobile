@@ -50,7 +50,8 @@ class BackupDestinationProvider with ChangeNotifier {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] is List) {
           final newDestinations = (jsonResponse['data'] as List)
-              .map<BackupDestination>((destJson) => BackupDestination.fromJson(destJson))
+              .map<BackupDestination>(
+                  (destJson) => BackupDestination.fromJson(destJson))
               .toList();
 
           if (page == 1) {
@@ -69,7 +70,8 @@ class BackupDestinationProvider with ChangeNotifier {
         }
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchDestinations(page: page, perPage: perPage);
       } else {
@@ -112,7 +114,8 @@ class BackupDestinationProvider with ChangeNotifier {
         return BackupDestination.fromJson(jsonResponse['data']);
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getDestination(id);
       } else {
@@ -126,7 +129,8 @@ class BackupDestinationProvider with ChangeNotifier {
     }
   }
 
-  Future<BackupDestination?> createDestination(Map<String, dynamic> destinationData) async {
+  Future<BackupDestination?> createDestination(
+      Map<String, dynamic> destinationData) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -152,7 +156,8 @@ class BackupDestinationProvider with ChangeNotifier {
         return newDestination;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return createDestination(destinationData);
       } else {
@@ -166,7 +171,8 @@ class BackupDestinationProvider with ChangeNotifier {
     }
   }
 
-  Future<BackupDestination?> updateDestination(int id, Map<String, dynamic> destinationData) async {
+  Future<BackupDestination?> updateDestination(
+      int id, Map<String, dynamic> destinationData) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -186,7 +192,8 @@ class BackupDestinationProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final updatedDestination = BackupDestination.fromJson(jsonResponse['data']);
+        final updatedDestination =
+            BackupDestination.fromJson(jsonResponse['data']);
         final index = _destinations.indexWhere((dest) => dest.id == id);
         if (index != -1) {
           _destinations[index] = updatedDestination;
@@ -195,7 +202,8 @@ class BackupDestinationProvider with ChangeNotifier {
         return updatedDestination;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return updateDestination(id, destinationData);
       } else {
@@ -232,7 +240,8 @@ class BackupDestinationProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return deleteDestination(id);
       } else {
@@ -261,7 +270,8 @@ class BackupDestinationProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 

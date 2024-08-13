@@ -40,7 +40,8 @@ class BackupTaskProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse.containsKey('data')) {
+        if (jsonResponse is Map<String, dynamic> &&
+            jsonResponse.containsKey('data')) {
           _backupTasks = (jsonResponse['data'] as List)
               .map((item) => BackupTask.fromJson(item))
               .toList();
@@ -51,7 +52,8 @@ class BackupTaskProvider with ChangeNotifier {
           throw Exception('Invalid backup tasks data format');
         }
       } else if (response.statusCode == 429) {
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchBackupTasks();
       } else {
@@ -92,7 +94,8 @@ class BackupTaskProvider with ChangeNotifier {
         // Refetch the backup tasks to update the status
         await fetchBackupTasks();
       } else if (response.statusCode == 429) {
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return runBackupTask(taskId);
       }
@@ -100,7 +103,8 @@ class BackupTaskProvider with ChangeNotifier {
       return apiResponse;
     } catch (e) {
       print('Run backup task error: $e');
-      return ApiResponse(message: 'An unexpected error occurred', statusCode: 500);
+      return ApiResponse(
+          message: 'An unexpected error occurred', statusCode: 500);
     }
   }
 
@@ -125,13 +129,15 @@ class BackupTaskProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse.containsKey('data')) {
+        if (jsonResponse is Map<String, dynamic> &&
+            jsonResponse.containsKey('data')) {
           return BackupTask.fromJson(jsonResponse['data']);
         } else {
           throw Exception('Invalid backup task data format');
         }
       } else if (response.statusCode == 429) {
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getBackupTask(taskId);
       } else {
@@ -169,7 +175,8 @@ class BackupTaskProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         try {
           final jsonData = json.decode(response.body);
-          if (jsonData is Map<String, dynamic> && jsonData.containsKey('data')) {
+          if (jsonData is Map<String, dynamic> &&
+              jsonData.containsKey('data')) {
             return BackupTaskLog.fromJson(jsonData['data']);
           } else {
             print('Invalid JSON structure: ${response.body}');
@@ -181,7 +188,8 @@ class BackupTaskProvider with ChangeNotifier {
           return null;
         }
       } else if (response.statusCode == 429) {
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getLatestBackupTaskLog(taskId);
       } else {
@@ -197,7 +205,8 @@ class BackupTaskProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 

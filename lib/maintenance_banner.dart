@@ -30,7 +30,8 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
   void initState() {
     super.initState();
     _checkMaintenanceStatus();
-    _timer = Timer.periodic(const Duration(minutes: 5), (_) => _checkMaintenanceStatus());
+    _timer = Timer.periodic(
+        const Duration(minutes: 5), (_) => _checkMaintenanceStatus());
   }
 
   @override
@@ -40,7 +41,8 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
   }
 
   Future<void> _checkMaintenanceStatus() async {
-    if (!widget.authManager.isLoggedIn || DateTime.now().difference(_lastCheckTime).inMinutes < 5) {
+    if (!widget.authManager.isLoggedIn ||
+        DateTime.now().difference(_lastCheckTime).inMinutes < 5) {
       return; // Don't check if not logged in or if last check was less than 5 minutes ago
     }
 
@@ -62,7 +64,8 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
         _setMaintenanceMode(true);
       } else if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        if (jsonResponse is Map<String, dynamic> && jsonResponse.containsKey('data')) {
+        if (jsonResponse is Map<String, dynamic> &&
+            jsonResponse.containsKey('data')) {
           _setMaintenanceMode(false);
         } else {
           if (kDebugMode) {
@@ -110,7 +113,8 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                 child: SafeArea(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,14 +131,19 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
                           Expanded(
                             child: Text(
                               'Maintenance in Progress',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ),
                           IconButton(
-                            icon: const HeroIcon(HeroIcons.xMark, style: HeroIconStyle.solid, color: Colors.white),
+                            icon: const HeroIcon(HeroIcons.xMark,
+                                style: HeroIconStyle.solid,
+                                color: Colors.white),
                             onPressed: () => setState(() => _isVisible = false),
                           ),
                         ],
@@ -142,7 +151,10 @@ class _MaintenanceBannerState extends State<MaintenanceBanner> {
                       const SizedBox(height: 8),
                       Text(
                         'We\'re currently improving our services. Thank you for your patience!',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.white),
                       ),
                     ],
                   ),

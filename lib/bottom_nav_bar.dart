@@ -39,13 +39,15 @@ class BottomNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _buildNavItem(
+                Expanded(
+                    child: _buildNavItem(
                   context: context,
                   item: NavigationItem.backupTasks,
                   icon: HeroIcons.archiveBox,
                   label: 'Backup Tasks',
                 )),
-                Expanded(child: _buildNavItem(
+                Expanded(
+                    child: _buildNavItem(
                   context: context,
                   item: NavigationItem.taskLogs,
                   icon: HeroIcons.documentText,
@@ -80,13 +82,17 @@ class BottomNavBar extends StatelessWidget {
             duration: Duration(milliseconds: 200),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+              color: isSelected
+                  ? theme.colorScheme.primary.withOpacity(0.1)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
             child: HeroIcon(
               icon,
               style: isSelected ? HeroIconStyle.solid : HeroIconStyle.outline,
-              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyLarge?.color,
               size: 24,
             ),
           ),
@@ -94,7 +100,9 @@ class BottomNavBar extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyLarge?.color,
               fontSize: 10,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
@@ -123,7 +131,8 @@ class BottomNavBar extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                color:
+                    isSelected ? theme.colorScheme.primary : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -137,15 +146,18 @@ class BottomNavBar extends StatelessWidget {
                   : null,
               child: user?.personalInfo.avatarUrl == null
                   ? Text(
-                user?.personalInfo.firstName.substring(0, 1).toUpperCase() ?? '',
-                style: TextStyle(
-                  color: isSelected
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.primary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
+                      user?.personalInfo.firstName
+                              .substring(0, 1)
+                              .toUpperCase() ??
+                          '',
+                      style: TextStyle(
+                        color: isSelected
+                            ? theme.colorScheme.onPrimary
+                            : theme.colorScheme.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
                   : null,
             ),
           ),
@@ -153,7 +165,9 @@ class BottomNavBar extends StatelessWidget {
           Text(
             'Profile',
             style: TextStyle(
-              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyLarge?.color,
               fontSize: 10,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

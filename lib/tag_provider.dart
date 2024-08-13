@@ -31,8 +31,11 @@ class TagProvider with ChangeNotifier {
     }
 
     try {
-      final uri = Uri.parse('${authManager.baseUrl}/api/tags')
-          .replace(queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final uri = Uri.parse('${authManager.baseUrl}/api/tags').replace(
+          queryParameters: {
+            'page': page.toString(),
+            'per_page': perPage.toString()
+          });
 
       final response = await http.get(
         uri,
@@ -64,7 +67,8 @@ class TagProvider with ChangeNotifier {
         }
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchTags(page: page, perPage: perPage);
       } else {
@@ -114,7 +118,8 @@ class TagProvider with ChangeNotifier {
         return newTag;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return createTag(label, description: description);
       } else {
@@ -150,7 +155,8 @@ class TagProvider with ChangeNotifier {
         return Tag.fromJson(jsonResponse['data']);
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getTag(id);
       } else {
@@ -196,7 +202,8 @@ class TagProvider with ChangeNotifier {
         return updatedTag;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return updateTag(id, label: label, description: description);
       } else {
@@ -233,7 +240,8 @@ class TagProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return deleteTag(id);
       } else {
@@ -262,7 +270,8 @@ class TagProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 

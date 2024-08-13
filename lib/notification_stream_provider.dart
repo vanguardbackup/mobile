@@ -50,7 +50,8 @@ class NotificationStreamProvider with ChangeNotifier {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] is List) {
           final newStreams = (jsonResponse['data'] as List)
-              .map<NotificationStream>((streamJson) => NotificationStream.fromJson(streamJson))
+              .map<NotificationStream>(
+                  (streamJson) => NotificationStream.fromJson(streamJson))
               .toList();
 
           if (page == 1) {
@@ -69,7 +70,8 @@ class NotificationStreamProvider with ChangeNotifier {
         }
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return fetchStreams(page: page, perPage: perPage);
       } else {
@@ -112,7 +114,8 @@ class NotificationStreamProvider with ChangeNotifier {
         return NotificationStream.fromJson(jsonResponse['data']);
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return getStream(id);
       } else {
@@ -126,7 +129,8 @@ class NotificationStreamProvider with ChangeNotifier {
     }
   }
 
-  Future<NotificationStream?> createStream(Map<String, dynamic> streamData) async {
+  Future<NotificationStream?> createStream(
+      Map<String, dynamic> streamData) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -152,7 +156,8 @@ class NotificationStreamProvider with ChangeNotifier {
         return newStream;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return createStream(streamData);
       } else {
@@ -166,7 +171,8 @@ class NotificationStreamProvider with ChangeNotifier {
     }
   }
 
-  Future<NotificationStream?> updateStream(int id, Map<String, dynamic> streamData) async {
+  Future<NotificationStream?> updateStream(
+      int id, Map<String, dynamic> streamData) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
@@ -195,7 +201,8 @@ class NotificationStreamProvider with ChangeNotifier {
         return updatedStream;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return updateStream(id, streamData);
       } else {
@@ -232,7 +239,8 @@ class NotificationStreamProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 429) {
         // Handle rate limit exceeded
-        final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
+        final retryAfter =
+            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         await Future.delayed(Duration(seconds: retryAfter));
         return deleteStream(id);
       } else {
@@ -261,7 +269,8 @@ class NotificationStreamProvider with ChangeNotifier {
 
   bool _canMakeRequest() {
     final now = DateTime.now();
-    _requestTimestamps.removeWhere((timestamp) => now.difference(timestamp) > _rateLimitWindow);
+    _requestTimestamps.removeWhere(
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 
