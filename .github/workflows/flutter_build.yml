@@ -1,40 +1,11 @@
-name: Flutter CI
+name: Flutter Build
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_call:
 
 jobs:
-  test:
-    name: Run Flutter tests and checks
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.x'
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-
-      - name: Analyze project source
-        run: flutter analyze
-
-      - name: Generate mocks
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: Run unit tests
-        run: flutter test
-
   build-android:
     name: Build Android APK
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -55,7 +26,6 @@ jobs:
 
   build-ios:
     name: Build iOS IPA
-    needs: test
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
