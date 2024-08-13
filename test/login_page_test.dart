@@ -31,7 +31,8 @@ void main() {
     );
   }
 
-  testWidgets('LoginPage has email and password fields', (WidgetTester tester) async {
+  testWidgets('LoginPage has email and password fields',
+      (WidgetTester tester) async {
     await tester.pumpWidget(createLoginPage());
     await tester.pumpAndSettle();
 
@@ -48,7 +49,8 @@ void main() {
     expect(find.byType(ElevatedButton), findsOneWidget);
   });
 
-  testWidgets('Tapping login button with empty fields shows validation errors', (WidgetTester tester) async {
+  testWidgets('Tapping login button with empty fields shows validation errors',
+      (WidgetTester tester) async {
     await tester.pumpWidget(createLoginPage());
     await tester.pumpAndSettle();
 
@@ -59,13 +61,15 @@ void main() {
     expect(find.text('Please enter your password'), findsOneWidget);
   });
 
-  testWidgets('Shows error dialog on login failure', (WidgetTester tester) async {
+  testWidgets('Shows error dialog on login failure',
+      (WidgetTester tester) async {
     when(mockUserProvider.login(any, any)).thenAnswer((_) async => false);
 
     await tester.pumpWidget(createLoginPage());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'test@example.com');
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'test@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
 
     await tester.tap(find.byType(ElevatedButton));

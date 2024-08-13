@@ -16,16 +16,20 @@ void main() {
   setUp(() {
     mockAuthManager = MockAuthManager();
     mockClient = MockClient();
-    userProvider = UserProvider(authManager: mockAuthManager, client: mockClient);
+    userProvider =
+        UserProvider(authManager: mockAuthManager, client: mockClient);
   });
 
   group('UserProvider', () {
     test('login success', () async {
       when(mockAuthManager.baseUrl).thenReturn('http://example.com');
-      when(mockClient.post(Uri.parse('http://example.com/login'), headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('{"token": "fake_token"}', 200));
+      when(mockClient.post(Uri.parse('http://example.com/login'),
+              headers: anyNamed('headers'), body: anyNamed('body')))
+          .thenAnswer(
+              (_) async => http.Response('{"token": "fake_token"}', 200));
 
-      final result = await userProvider.login('test@example.com', 'password123');
+      final result =
+          await userProvider.login('test@example.com', 'password123');
 
       expect(result, true);
       verify(mockAuthManager.login('fake_token')).called(1);
@@ -33,10 +37,13 @@ void main() {
 
     test('login failure', () async {
       when(mockAuthManager.baseUrl).thenReturn('http://example.com');
-      when(mockClient.post(Uri.parse('http://example.com/login'), headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('{"error": "Invalid credentials"}', 401));
+      when(mockClient.post(Uri.parse('http://example.com/login'),
+              headers: anyNamed('headers'), body: anyNamed('body')))
+          .thenAnswer((_) async =>
+              http.Response('{"error": "Invalid credentials"}', 401));
 
-      final result = await userProvider.login('test@example.com', 'wrong_password');
+      final result =
+          await userProvider.login('test@example.com', 'wrong_password');
 
       expect(result, false);
       verifyNever(mockAuthManager.login(any));
@@ -45,8 +52,10 @@ void main() {
     test('fetchUser success', () async {
       when(mockAuthManager.isLoggedIn).thenReturn(true);
       when(mockAuthManager.baseUrl).thenReturn('http://example.com');
-      when(mockAuthManager.headers).thenReturn({'Authorization': 'Bearer fake_token'});
-      when(mockClient.get(Uri.parse('http://example.com/api/user'), headers: anyNamed('headers')))
+      when(mockAuthManager.headers)
+          .thenReturn({'Authorization': 'Bearer fake_token'});
+      when(mockClient.get(Uri.parse('http://example.com/api/user'),
+              headers: anyNamed('headers')))
           .thenAnswer((_) async => http.Response('''
 {
   "data": {
@@ -95,15 +104,19 @@ void main() {
       expect(userProvider.user!.accountSettings.timezone, 'UTC');
       expect(userProvider.user!.backupTasks.total, 5);
       expect(userProvider.user!.relatedEntities.remoteServers, 2);
-      expect(userProvider.user!.timestamps.accountCreated, DateTime.parse('2023-05-01T12:00:00Z'));
+      expect(userProvider.user!.timestamps.accountCreated,
+          DateTime.parse('2023-05-01T12:00:00Z'));
     });
 
     test('fetchUser failure', () async {
       when(mockAuthManager.isLoggedIn).thenReturn(true);
       when(mockAuthManager.baseUrl).thenReturn('http://example.com');
-      when(mockAuthManager.headers).thenReturn({'Authorization': 'Bearer fake_token'});
-      when(mockClient.get(Uri.parse('http://example.com/api/user'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('{"error": "Unauthorized"}', 401));
+      when(mockAuthManager.headers)
+          .thenReturn({'Authorization': 'Bearer fake_token'});
+      when(mockClient.get(Uri.parse('http://example.com/api/user'),
+              headers: anyNamed('headers')))
+          .thenAnswer(
+              (_) async => http.Response('{"error": "Unauthorized"}', 401));
 
       final result = await userProvider.fetchUser();
 
