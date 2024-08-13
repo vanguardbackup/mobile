@@ -558,17 +558,23 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
 
   Widget _buildRunBackupButton(BuildContext context) {
     final theme = Theme.of(context);
+    final buttonColor = _isRunning ? Colors.grey : theme.colorScheme.primary;
+    final textAndIconColor = _isRunning
+        ? theme.colorScheme.onSurface.withOpacity(0.38)  // Disabled text color
+        : theme.colorScheme.onPrimary;
+
     return FloatingActionButton.extended(
       onPressed: _isRunning ? null : () => _showRunBackupConfirmation(context),
-      backgroundColor: _isRunning ? Colors.grey : theme.colorScheme.primary,
-      foregroundColor: theme.colorScheme.onPrimary,
-      icon: _isRunning
-          ? _buildRotatingIcon(context)
-          : HeroIcon(HeroIcons.play,
-              color: theme.colorScheme.onPrimary, size: 20),
+      backgroundColor: buttonColor,
+      foregroundColor: textAndIconColor,
+      icon: HeroIcon(HeroIcons.play, color: textAndIconColor, size: 20),
       label: Text(
         _isRunning ? 'Running...' : 'Run Task',
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: textAndIconColor,
+        ),
       ),
     );
   }
@@ -612,7 +618,7 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
                             style: TextStyle(
                                 color: _getStatusColor(_latestLog!.status),
                                 fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_latestLog!.finishedAt),
+                        Text(_currentTask.timestamps.lastRunLocalTime ?? 'Unknown',
                             style: TextStyle(
                                 color: theme.colorScheme.onBackground
                                     .withOpacity(0.7))),
@@ -699,7 +705,7 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
                         style: TextStyle(
                             color: _getStatusColor(_latestLog!.status),
                             fontWeight: FontWeight.bold)),
-                    Text(_formatDate(_latestLog!.finishedAt),
+                    Text(_currentTask.timestamps.lastRunLocalTime ?? 'Unknown',
                         style: TextStyle(
                             color: theme.colorScheme.onBackground
                                 .withOpacity(0.7))),

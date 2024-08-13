@@ -20,16 +20,33 @@ class BackupTaskLogProvider with ChangeNotifier {
   final Duration _rateLimitWindow = const Duration(minutes: 1);
   final List<DateTime> _requestTimestamps = [];
 
+  // Caching variables
+  final Map<String, CachedData<List<BackupTaskLogEntry>>> _cachedLogs = {};
+  final Map<int, CachedData<BackupTaskLogEntry>> _cachedSingleLogs = {};
+  final Duration _cacheDuration = const Duration(minutes: 5);
+
   BackupTaskLogProvider({required this.authManager});
 
-  Future<bool> fetchLogs(
-      {int page = 1, int perPage = 10, String? search}) async {
+  Future<bool> fetchLogs({
+    int page = 1,
+    int perPage = 10,
+    String? search,
+    bool forceRefresh = false,
+  }) async {
     if (!authManager.isLoggedIn) {
       throw Exception('Not logged in');
     }
 
+    final cacheKey = _getCacheKey(page, perPage, search);
+    final cachedData = _cachedLogs[cacheKey];
+
+    if (!forceRefresh && cachedData != null && !cachedData.isExpired()) {
+      _updateStateFromCache(cachedData.data, page, search);
+      return true;
+    }
+
     if (!_canMakeRequest()) {
-      await _waitForNextAvailableSlot();
+      throw RateLimitException('Rate limit exceeded. Please try again later.');
     }
 
     try {
@@ -57,15 +74,13 @@ class BackupTaskLogProvider with ChangeNotifier {
                   (logJson) => BackupTaskLogEntry.fromJson(logJson))
               .toList();
 
-          if (page == 1) {
-            _logs.clear();
-          }
-          _logs.addAll(newLogs);
+          _cachedLogs[cacheKey] = CachedData(newLogs);
+
+          _updateStateFromCache(newLogs, page, search);
 
           _currentPage = jsonResponse['meta']['current_page'];
           _totalPages = jsonResponse['meta']['last_page'];
           _hasMoreLogs = _currentPage < _totalPages;
-          _searchQuery = search ?? '';
 
           notifyListeners();
           return true;
@@ -73,11 +88,7 @@ class BackupTaskLogProvider with ChangeNotifier {
           throw Exception('Invalid logs data format');
         }
       } else if (response.statusCode == 429) {
-        // Handle rate limit exceeded
-        final retryAfter =
-            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
-        await Future.delayed(Duration(seconds: retryAfter));
-        return fetchLogs(page: page, perPage: perPage, search: search);
+        throw RateLimitException('Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to load logs: ${response.statusCode}');
       }
@@ -85,7 +96,7 @@ class BackupTaskLogProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Fetch logs error: $e');
       }
-      return false;
+      rethrow;
     }
   }
 
@@ -107,8 +118,13 @@ class BackupTaskLogProvider with ChangeNotifier {
       throw Exception('Not logged in');
     }
 
+    final cachedLog = _cachedSingleLogs[id];
+    if (cachedLog != null && !cachedLog.isExpired()) {
+      return cachedLog.data;
+    }
+
     if (!_canMakeRequest()) {
-      await _waitForNextAvailableSlot();
+      throw RateLimitException('Rate limit exceeded. Please try again later.');
     }
 
     try {
@@ -121,13 +137,11 @@ class BackupTaskLogProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        return BackupTaskLogEntry.fromJson(jsonResponse['data']);
+        final log = BackupTaskLogEntry.fromJson(jsonResponse['data']);
+        _cachedSingleLogs[id] = CachedData(log);
+        return log;
       } else if (response.statusCode == 429) {
-        // Handle rate limit exceeded
-        final retryAfter =
-            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
-        await Future.delayed(Duration(seconds: retryAfter));
-        return getLog(id);
+        throw RateLimitException('Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to get log: ${response.statusCode}');
       }
@@ -135,7 +149,7 @@ class BackupTaskLogProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Get log error: $e');
       }
-      return null;
+      rethrow;
     }
   }
 
@@ -145,7 +159,7 @@ class BackupTaskLogProvider with ChangeNotifier {
     }
 
     if (!_canMakeRequest()) {
-      await _waitForNextAvailableSlot();
+      throw RateLimitException('Rate limit exceeded. Please try again later.');
     }
 
     try {
@@ -158,14 +172,12 @@ class BackupTaskLogProvider with ChangeNotifier {
 
       if (response.statusCode == 204) {
         _logs.removeWhere((log) => log.id == id);
+        _cachedSingleLogs.remove(id);
+        _invalidateListCache();
         notifyListeners();
         return true;
       } else if (response.statusCode == 429) {
-        // Handle rate limit exceeded
-        final retryAfter =
-            int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
-        await Future.delayed(Duration(seconds: retryAfter));
-        return deleteLog(id);
+        throw RateLimitException('Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to delete log: ${response.statusCode}');
       }
@@ -173,7 +185,7 @@ class BackupTaskLogProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Delete log error: $e');
       }
-      return false;
+      rethrow;
     }
   }
 
@@ -183,6 +195,7 @@ class BackupTaskLogProvider with ChangeNotifier {
     _totalPages = 1;
     _hasMoreLogs = true;
     _searchQuery = '';
+    _invalidateListCache();
     notifyListeners();
   }
 
@@ -191,18 +204,16 @@ class BackupTaskLogProvider with ChangeNotifier {
     fetchLogs();
   }
 
+  Future<bool> forceRefresh({int perPage = 10}) async {
+    _invalidateListCache();
+    return await fetchLogs(page: 1, perPage: perPage, search: _searchQuery, forceRefresh: true);
+  }
+
   bool _canMakeRequest() {
     final now = DateTime.now();
     _requestTimestamps.removeWhere(
-        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
+            (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
-  }
-
-  Future<void> _waitForNextAvailableSlot() async {
-    final now = DateTime.now();
-    final oldestTimestamp = _requestTimestamps.first;
-    final waitDuration = _rateLimitWindow - now.difference(oldestTimestamp);
-    await Future.delayed(waitDuration);
   }
 
   void _recordRequest() {
@@ -211,4 +222,39 @@ class BackupTaskLogProvider with ChangeNotifier {
       _requestTimestamps.removeAt(0);
     }
   }
+
+  String _getCacheKey(int page, int perPage, String? search) {
+    return 'page_${page}_perPage_${perPage}_search_${search ?? ""}';
+  }
+
+  void _updateStateFromCache(List<BackupTaskLogEntry> cachedLogs, int page, String? search) {
+    if (page == 1) {
+      _logs.clear();
+    }
+    _logs.addAll(cachedLogs);
+    _searchQuery = search ?? '';
+  }
+
+  void _invalidateListCache() {
+    _cachedLogs.clear();
+  }
+}
+
+class CachedData<T> {
+  final T data;
+  final DateTime timestamp;
+
+  CachedData(this.data) : timestamp = DateTime.now();
+
+  bool isExpired() {
+    return DateTime.now().difference(timestamp) > const Duration(minutes: 5);
+  }
+}
+
+class RateLimitException implements Exception {
+  final String message;
+  RateLimitException(this.message);
+
+  @override
+  String toString() => message;
 }

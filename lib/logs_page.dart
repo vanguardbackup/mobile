@@ -47,22 +47,47 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
-    final logProvider =
-        Provider.of<BackupTaskLogProvider>(context, listen: false);
-    await logProvider.fetchLogs(perPage: 20, search: _searchQuery);
-
-    setState(() => _isLoading = false);
+    try {
+      final logProvider =
+      Provider.of<BackupTaskLogProvider>(context, listen: false);
+      await logProvider.fetchLogs(perPage: 20, search: _searchQuery);
+    } catch (e) {
+      _showSnackBar(e.toString(), isSuccess: false);
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _loadMoreLogs() async {
     if (_isLoading) return;
     setState(() => _isLoading = true);
 
-    final logProvider =
-        Provider.of<BackupTaskLogProvider>(context, listen: false);
-    await logProvider.loadMoreLogs(perPage: 20);
+    try {
+      final logProvider =
+      Provider.of<BackupTaskLogProvider>(context, listen: false);
+      await logProvider.loadMoreLogs(perPage: 20);
+    } catch (e) {
+      _showSnackBar(e.toString(), isSuccess: false);
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
-    setState(() => _isLoading = false);
+  Future<void> _refreshLogs() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final logProvider =
+      Provider.of<BackupTaskLogProvider>(context, listen: false);
+      await logProvider.forceRefresh(perPage: 20);
+      _showSnackBar('Logs refreshed successfully', isSuccess: true);
+    } on RateLimitException catch (e) {
+      _showSnackBar(e.toString(), isSuccess: false);
+    } catch (e) {
+      _showSnackBar('Failed to refresh logs', isSuccess: false);
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -86,7 +111,7 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
   void _showSnackBar(String message, {bool isSuccess = true}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
         behavior: SnackBarBehavior.floating,
         backgroundColor: isSuccess ? Colors.green : Colors.red,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -107,26 +132,47 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Backup Task Logs',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Backup Task Logs',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const HeroIcon(HeroIcons.arrowPath),
+                        onPressed: _refreshLogs,
+                        tooltip: 'Refresh logs',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildSearchBar(context),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: _buildLogsList(context),
+                  ),
+                ],
+              ),
+            ),
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(),
                 ),
               ),
-              SizedBox(height: 16),
-              _buildSearchBar(context),
-              SizedBox(height: 16),
-              Expanded(
-                child: _buildLogsList(context),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
