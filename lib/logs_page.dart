@@ -49,7 +49,7 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
 
     try {
       final logProvider =
-      Provider.of<BackupTaskLogProvider>(context, listen: false);
+          Provider.of<BackupTaskLogProvider>(context, listen: false);
       await logProvider.fetchLogs(perPage: 20, search: _searchQuery);
     } catch (e) {
       _showSnackBar(e.toString(), isSuccess: false);
@@ -64,7 +64,7 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
 
     try {
       final logProvider =
-      Provider.of<BackupTaskLogProvider>(context, listen: false);
+          Provider.of<BackupTaskLogProvider>(context, listen: false);
       await logProvider.loadMoreLogs(perPage: 20);
     } catch (e) {
       _showSnackBar(e.toString(), isSuccess: false);
@@ -78,7 +78,7 @@ class _BackupTaskLogsPageState extends State<BackupTaskLogsPage> {
 
     try {
       final logProvider =
-      Provider.of<BackupTaskLogProvider>(context, listen: false);
+          Provider.of<BackupTaskLogProvider>(context, listen: false);
       await logProvider.forceRefresh(perPage: 20);
       _showSnackBar('Logs refreshed successfully', isSuccess: true);
     } on RateLimitException catch (e) {

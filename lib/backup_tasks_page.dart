@@ -560,7 +560,7 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
     final theme = Theme.of(context);
     final buttonColor = _isRunning ? Colors.grey : theme.colorScheme.primary;
     final textAndIconColor = _isRunning
-        ? theme.colorScheme.onSurface.withOpacity(0.38)  // Disabled text color
+        ? theme.colorScheme.onSurface.withOpacity(0.38) // Disabled text color
         : theme.colorScheme.onPrimary;
 
     return FloatingActionButton.extended(
@@ -618,7 +618,9 @@ class _BackupTaskDetailPageState extends State<BackupTaskDetailPage>
                             style: TextStyle(
                                 color: _getStatusColor(_latestLog!.status),
                                 fontWeight: FontWeight.bold)),
-                        Text(_currentTask.timestamps.lastRunLocalTime ?? 'Unknown',
+                        Text(
+                            _currentTask.timestamps.lastRunLocalTime ??
+                                'Unknown',
                             style: TextStyle(
                                 color: theme.colorScheme.onBackground
                                     .withOpacity(0.7))),

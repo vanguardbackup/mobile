@@ -88,7 +88,8 @@ class BackupTaskLogProvider with ChangeNotifier {
           throw Exception('Invalid logs data format');
         }
       } else if (response.statusCode == 429) {
-        throw RateLimitException('Rate limit exceeded. Please try again later.');
+        throw RateLimitException(
+            'Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to load logs: ${response.statusCode}');
       }
@@ -141,7 +142,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         _cachedSingleLogs[id] = CachedData(log);
         return log;
       } else if (response.statusCode == 429) {
-        throw RateLimitException('Rate limit exceeded. Please try again later.');
+        throw RateLimitException(
+            'Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to get log: ${response.statusCode}');
       }
@@ -177,7 +179,8 @@ class BackupTaskLogProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else if (response.statusCode == 429) {
-        throw RateLimitException('Rate limit exceeded. Please try again later.');
+        throw RateLimitException(
+            'Rate limit exceeded. Please try again later.');
       } else {
         throw Exception('Failed to delete log: ${response.statusCode}');
       }
@@ -206,13 +209,14 @@ class BackupTaskLogProvider with ChangeNotifier {
 
   Future<bool> forceRefresh({int perPage = 10}) async {
     _invalidateListCache();
-    return await fetchLogs(page: 1, perPage: perPage, search: _searchQuery, forceRefresh: true);
+    return await fetchLogs(
+        page: 1, perPage: perPage, search: _searchQuery, forceRefresh: true);
   }
 
   bool _canMakeRequest() {
     final now = DateTime.now();
     _requestTimestamps.removeWhere(
-            (timestamp) => now.difference(timestamp) > _rateLimitWindow);
+        (timestamp) => now.difference(timestamp) > _rateLimitWindow);
     return _requestTimestamps.length < _maxRequestsPerMinute;
   }
 
@@ -227,7 +231,8 @@ class BackupTaskLogProvider with ChangeNotifier {
     return 'page_${page}_perPage_${perPage}_search_${search ?? ""}';
   }
 
-  void _updateStateFromCache(List<BackupTaskLogEntry> cachedLogs, int page, String? search) {
+  void _updateStateFromCache(
+      List<BackupTaskLogEntry> cachedLogs, int page, String? search) {
     if (page == 1) {
       _logs.clear();
     }
