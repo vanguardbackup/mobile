@@ -1,3 +1,17 @@
+<p align="center"><img src="https://raw.githubusercontent.com/vanguardbackup/assets/main/icon-200.png" width="120" alt="Vanguard Logo"></p>
+
+<p align="center">
+  <a href="https://opensource.org/license/mit">
+    <img src="https://img.shields.io/github/license/vanguardbackup/mobile?style=for-the-badge&logo=opensourceinitiative&logoColor=ffffff" alt="License: MIT">
+  </a>
+  <a href="https://github.com/vanguardbackup/mobile/actions/workflows/flutter_test.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/vanguardbackup/mobile/flutter_test.yml?style=for-the-badge&logo=githubactions&logoColor=ffffff&label=CI%20Pipeline" alt="Tests">
+  </a>
+<a href="https://github.com/vanguardbackup/vanguard-php-sdk/releases">
+  <img src="https://img.shields.io/github/v/release/vanguardbackup/mobile?style=for-the-badge&logo=github&logoColor=ffffff" alt="GitHub Release">
+</a>
+</p>
+
 # Vanguard Mobile
 
 ## Overview
