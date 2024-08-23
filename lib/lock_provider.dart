@@ -81,7 +81,8 @@ class LockProvider with ChangeNotifier {
         } else {
           return {
             'success': false,
-            'message': 'Biometric authentication is not available on this device'
+            'message':
+                'Biometric authentication is not available on this device'
           };
         }
       } on PlatformException catch (e) {

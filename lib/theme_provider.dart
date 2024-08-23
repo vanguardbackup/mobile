@@ -21,7 +21,8 @@ class ThemeProvider with ChangeNotifier {
 
   Future<void> _loadPreferences() async {
     _prefs = await SharedPreferences.getInstance();
-    _themeMode = ThemeMode.values[_prefs.getInt(_themeAutoKey) ?? ThemeMode.auto.index];
+    _themeMode =
+        ThemeMode.values[_prefs.getInt(_themeAutoKey) ?? ThemeMode.auto.index];
     _updateThemeMode();
   }
 
@@ -46,7 +47,8 @@ class ThemeProvider with ChangeNotifier {
     if (_themeMode == ThemeMode.auto) {
       setThemeMode(_isDarkMode ? ThemeMode.light : ThemeMode.dark);
     } else {
-      setThemeMode(_themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
+      setThemeMode(
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
     }
   }
 
@@ -63,9 +65,12 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[900],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
-      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
-      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
+      displayLarge: TextStyle(
+          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+      titleLarge: TextStyle(
+          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
+      bodyMedium: TextStyle(
+          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
     ),
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
@@ -104,9 +109,12 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[100],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
-      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
-      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
+      displayLarge: TextStyle(
+          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+      titleLarge: TextStyle(
+          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
+      bodyMedium: TextStyle(
+          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
     ),
     colorScheme: const ColorScheme.light(
       primary: Colors.black,
