@@ -3,18 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:heroicons/heroicons.dart';
 import 'lock_provider.dart';
 import 'user_provider.dart';
+import 'auth_manager.dart';
 
 class LockScreen extends StatefulWidget {
   final Widget child;
+  final AuthManager authManager;
 
-  const LockScreen({Key? key, required this.child}) : super(key: key);
+  const LockScreen({Key? key, required this.child, required this.authManager}) : super(key: key);
 
   @override
   _LockScreenState createState() => _LockScreenState();
 }
 
-class _LockScreenState extends State<LockScreen>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+class _LockScreenState extends State<LockScreen> with WidgetsBindingObserver, TickerProviderStateMixin {
   bool _isChecking = true;
   late AnimationController _lockIconController;
   late Animation<double> _lockIconAnimation;
@@ -28,11 +29,10 @@ class _LockScreenState extends State<LockScreen>
     });
 
     _lockIconController = AnimationController(
-      duration: const Duration(milliseconds: 300), // Increased animation speed
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _lockIconAnimation =
-        Tween<double>(begin: 0, end: 1).animate(_lockIconController);
+    _lockIconAnimation = Tween<double>(begin: 0, end: 1).animate(_lockIconController);
   }
 
   @override
@@ -68,7 +68,7 @@ class _LockScreenState extends State<LockScreen>
         if (_isChecking) {
           return _buildLoadingScreen();
         }
-        if (lockProvider.isLockEnabled && lockProvider.isAppLocked) {
+        if (widget.authManager.isLoggedIn && lockProvider.isLockEnabled && lockProvider.isAppLocked) {
           return _buildLockScreen(context, lockProvider);
         }
         return widget.child;
@@ -111,7 +111,7 @@ class _LockScreenState extends State<LockScreen>
                   ),
                 ),
                 _buildUnlockButton(context, lockProvider),
-                SizedBox(height: 60), // Increased bottom padding
+                SizedBox(height: 60),
               ],
             ),
           ),
@@ -129,9 +129,7 @@ class _LockScreenState extends State<LockScreen>
           return Transform.rotate(
             angle: _lockIconAnimation.value * 2 * 3.14159,
             child: HeroIcon(
-              _lockIconAnimation.value < 0.5
-                  ? HeroIcons.lockClosed
-                  : HeroIcons.lockOpen,
+              _lockIconAnimation.value < 0.5 ? HeroIcons.lockClosed : HeroIcons.lockOpen,
               size: 48,
               color: theme.colorScheme.primary,
             ),
@@ -158,11 +156,9 @@ class _LockScreenState extends State<LockScreen>
         backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
         child: user?.personalInfo.avatarUrl == null
             ? Text(
-                user?.personalInfo.firstName.substring(0, 1).toUpperCase() ??
-                    'U',
-                style:
-                    TextStyle(fontSize: 48, color: theme.colorScheme.primary),
-              )
+          user?.personalInfo.firstName.substring(0, 1).toUpperCase() ?? 'U',
+          style: TextStyle(fontSize: 48, color: theme.colorScheme.primary),
+        )
             : null,
       ),
     );
@@ -271,8 +267,7 @@ class _LockScreenState extends State<LockScreen>
     );
   }
 
-  Future<void> _verifyPin(BuildContext context, LockProvider lockProvider,
-      String enteredPin) async {
+  Future<void> _verifyPin(BuildContext context, LockProvider lockProvider, String enteredPin) async {
     if (await lockProvider.checkPin(enteredPin)) {
       await _animateUnlock();
       lockProvider.unlockApp();
@@ -286,7 +281,7 @@ class _LockScreenState extends State<LockScreen>
 
   Future<void> _animateUnlock() async {
     await _lockIconController.forward();
-    await Future.delayed(const Duration(milliseconds: 300)); // Reduced delay
+    await Future.delayed(const Duration(milliseconds: 300));
     _lockIconController.reset();
   }
 }

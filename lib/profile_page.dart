@@ -153,8 +153,6 @@ class ProfilePage extends StatelessWidget {
             user.accountSettings.language),
         _buildSettingItem(context, HeroIcons.userCircle, 'Elevated Permissions',
             user.accountSettings.isAdmin ? 'Yes' : 'No'),
-        _buildSettingItem(context, HeroIcons.codeBracket, 'GitHub Login',
-            user.accountSettings.githubLoginEnabled ? 'Enabled' : 'Disabled'),
         _buildSettingItem(context, HeroIcons.envelope, 'Weekly Summary',
             user.accountSettings.weeklySummaryEnabled ? 'Enabled' : 'Disabled'),
       ],

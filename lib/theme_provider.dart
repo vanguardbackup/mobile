@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum ThemeMode { light, dark, auto }
+
 class ThemeProvider with ChangeNotifier {
   static const String _themePreferenceKey = 'theme_preference';
   static const String _themeAutoKey = 'theme_auto';
 
   late bool _isDarkMode;
-  late bool _isAuto;
+  late ThemeMode _themeMode;
   late SharedPreferences _prefs;
 
   ThemeProvider() {
@@ -15,42 +17,41 @@ class ThemeProvider with ChangeNotifier {
   }
 
   bool get isDarkMode => _isDarkMode;
-  bool get isAuto => _isAuto;
+  ThemeMode get themeMode => _themeMode;
 
   Future<void> _loadPreferences() async {
     _prefs = await SharedPreferences.getInstance();
-    _isAuto = _prefs.getBool(_themeAutoKey) ?? true;
+    _themeMode = ThemeMode.values[_prefs.getInt(_themeAutoKey) ?? ThemeMode.auto.index];
+    _updateThemeMode();
+  }
 
-    if (_isAuto) {
+  void _updateThemeMode() {
+    if (_themeMode == ThemeMode.auto) {
       var brightness = SchedulerBinding.instance.window.platformBrightness;
       _isDarkMode = brightness == Brightness.dark;
     } else {
-      _isDarkMode = _prefs.getBool(_themePreferenceKey) ?? true;
+      _isDarkMode = _themeMode == ThemeMode.dark;
     }
-
+    _prefs.setBool(_themePreferenceKey, _isDarkMode);
     notifyListeners();
+  }
+
+  void setThemeMode(ThemeMode mode) {
+    _themeMode = mode;
+    _prefs.setInt(_themeAutoKey, mode.index);
+    _updateThemeMode();
   }
 
   void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    _isAuto = false;
-    _savePreferences();
-    notifyListeners();
-  }
-
-  void setAutoTheme(bool value) {
-    _isAuto = value;
-    if (_isAuto) {
-      var brightness = SchedulerBinding.instance.window.platformBrightness;
-      _isDarkMode = brightness == Brightness.dark;
+    if (_themeMode == ThemeMode.auto) {
+      setThemeMode(_isDarkMode ? ThemeMode.light : ThemeMode.dark);
+    } else {
+      setThemeMode(_themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
     }
-    _savePreferences();
-    notifyListeners();
   }
 
-  void _savePreferences() {
-    _prefs.setBool(_themePreferenceKey, _isDarkMode);
-    _prefs.setBool(_themeAutoKey, _isAuto);
+  void resetToAutoMode() {
+    setThemeMode(ThemeMode.auto);
   }
 
   ThemeData get currentTheme => _isDarkMode ? darkTheme : lightTheme;
@@ -62,12 +63,9 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[900],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
-      titleLarge: TextStyle(
-          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
-      bodyMedium: TextStyle(
-          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
+      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
+      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
     ),
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
@@ -106,12 +104,9 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[100],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
-      titleLarge: TextStyle(
-          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
-      bodyMedium: TextStyle(
-          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
+      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
+      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
     ),
     colorScheme: const ColorScheme.light(
       primary: Colors.black,

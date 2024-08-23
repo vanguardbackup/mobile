@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vanguard/remote_servers_page.dart';
 import 'package:vanguard/tag_page.dart';
 import 'package:vanguard/tag_provider.dart';
@@ -19,21 +21,58 @@ import 'login_page.dart';
 import 'backup_tasks_page.dart';
 import 'logs_page.dart';
 import 'profile_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'maintenance_banner.dart';
 import 'bottom_nav_bar.dart';
 
+enum ThemeMode { light, dark, auto }
+
 class ThemeProvider with ChangeNotifier {
-  bool _isDarkMode = true;
+  static const String _themePreferenceKey = 'theme_preference';
+  static const String _themeAutoKey = 'theme_auto';
+
+  late bool _isDarkMode;
+  late ThemeMode _themeMode;
+  late SharedPreferences _prefs;
+
+  ThemeProvider() {
+    _loadPreferences();
+  }
 
   bool get isDarkMode => _isDarkMode;
+  ThemeMode get themeMode => _themeMode;
+
+  Future<void> _loadPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    _themeMode = ThemeMode.values[_prefs.getInt(_themeAutoKey) ?? ThemeMode.auto.index];
+    _updateThemeMode();
+  }
+
+  void _updateThemeMode() {
+    if (_themeMode == ThemeMode.auto) {
+      var brightness = SchedulerBinding.instance.window.platformBrightness;
+      _isDarkMode = brightness == Brightness.dark;
+    } else {
+      _isDarkMode = _themeMode == ThemeMode.dark;
+    }
+    _prefs.setBool(_themePreferenceKey, _isDarkMode);
+    notifyListeners();
+  }
+
+  void setThemeMode(ThemeMode mode) {
+    _themeMode = mode;
+    _prefs.setInt(_themeAutoKey, mode.index);
+    _updateThemeMode();
+  }
 
   void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
+    if (_themeMode == ThemeMode.auto) {
+      setThemeMode(_isDarkMode ? ThemeMode.light : ThemeMode.dark);
+    } else {
+      setThemeMode(_themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
+    }
   }
 
   ThemeData get currentTheme => _isDarkMode ? darkTheme : lightTheme;
@@ -45,12 +84,9 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[900],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
-      titleLarge: TextStyle(
-          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
-      bodyMedium: TextStyle(
-          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
+      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.white),
+      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.white70),
     ),
     colorScheme: const ColorScheme.dark(
       primary: Colors.white,
@@ -89,12 +125,9 @@ class ThemeProvider with ChangeNotifier {
     cardColor: Colors.grey[100],
     fontFamily: 'Poppins',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(
-          fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
-      titleLarge: TextStyle(
-          fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
-      bodyMedium: TextStyle(
-          fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
+      displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+      titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: Colors.black),
+      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Poppins', color: Colors.black87),
     ),
     colorScheme: const ColorScheme.light(
       primary: Colors.black,
@@ -177,10 +210,8 @@ void main() async {
   final backupTaskLogProvider = BackupTaskLogProvider(authManager: authManager);
   final lockProvider = LockProvider();
   final remoteServerProvider = RemoteServerProvider(authManager: authManager);
-  final backupDestinationProvider =
-      BackupDestinationProvider(authManager: authManager);
-  final notificationStreamProvider =
-      NotificationStreamProvider(authManager: authManager);
+  final backupDestinationProvider = BackupDestinationProvider(authManager: authManager);
+  final notificationStreamProvider = NotificationStreamProvider(authManager: authManager);
   final tagProvider = TagProvider(authManager: authManager);
 
   await deviceInfoProvider.initializeDeviceInfo();
@@ -223,6 +254,7 @@ class MyApp extends StatelessWidget {
           color: Colors.black,
           theme: themeProvider.currentTheme,
           home: LockScreen(
+            authManager: authManager, // Added authManager here
             child: Consumer<UserProvider>(
               builder: (context, userProvider, child) {
                 if (authManager.isLoggedIn && userProvider.user != null) {
@@ -308,14 +340,30 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                IconButton(
+                PopupMenuButton<ThemeMode>(
                   icon: Icon(
-                    themeProvider.isDarkMode
-                        ? Icons.light_mode
-                        : Icons.dark_mode,
+                    themeProvider.themeMode == ThemeMode.auto
+                        ? Icons.brightness_auto
+                        : (themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode),
                     color: Colors.white,
                   ),
-                  onPressed: () => themeProvider.toggleTheme(),
+                  onSelected: (ThemeMode result) {
+                    themeProvider.setThemeMode(result);
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<ThemeMode>>[
+                    const PopupMenuItem<ThemeMode>(
+                      value: ThemeMode.light,
+                      child: Text('Light Mode'),
+                    ),
+                    const PopupMenuItem<ThemeMode>(
+                      value: ThemeMode.dark,
+                      child: Text('Dark Mode'),
+                    ),
+                    const PopupMenuItem<ThemeMode>(
+                      value: ThemeMode.auto,
+                      child: Text('Auto Mode'),
+                    ),
+                  ],
                 ),
               ],
             ),
